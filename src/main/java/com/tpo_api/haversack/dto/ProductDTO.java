@@ -4,12 +4,11 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class ProductoDTO {
-    
+public class ProductDTO {
     private String id;
     private String name;
     private String description;
-    private Integer price;
+    private Double price;
     private String image;
     private List<String> images;
     private String stock;
