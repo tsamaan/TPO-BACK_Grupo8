@@ -1,0 +1,448 @@
+{
+  "products": [
+    {
+      "id": "bccb",
+      "name": "Mochila Urban c/Porta Notebook",
+      "price": 30000,
+      "image": "/img/Mochilas/15 B-Photoroom.jpg",
+      "images": [
+        "/img/Mochilas/15 B-Photoroom.jpg",
+        "/img/Mochilas/Captura de pantalla 2025-04-23 011558-Photoroom.jpg"
+      ],
+      "stock": "27",
+      "category": "mochilas",
+      "quantity": 3,
+      "colores": [
+        "Azul",
+        "Rojo"
+      ],
+      "description": "La mochila Haversack de 18 pulgadas es la compañera ideal para adultos que buscan funcionalidad y estilo en su día a día. Con una capacidad de 25 litros, es perfecta para llevar todo lo necesario, ya sea para la universidad, el trabajo o actividades escolares. Su diseño urbano y versátil se adapta a diferentes entornos, asegurando que siempre luzcas bien mientras transportas tus pertenencias.",
+      "tags": [
+        "Mochilas",
+        "Urban",
+        "PortaNotebook"
+      ]
+    },
+    {
+      "id": "27ff",
+      "name": "Mochila Geometric",
+      "description": "La mochila Haversack modelo Geométrico es la elección perfecta para quienes buscan funcionalidad y estilo en su día a día. Con una capacidad de 28 litros, es ideal para el uso urbano, universitario o escolar, permitiendo llevar todo lo necesario de manera organizada. Su diseño cuenta con un compartimento específico para notebook, asegurando la protección de tus dispositivos electrónicos mientras te desplazas.",
+      "price": 28500,
+      "image": "/img/Mochilas/68-Photoroom.jpg",
+      "images": [
+        "/img/Mochilas/68-Photoroom.jpg",
+        "/img/Mochilas/65-Photoroom.jpg"
+      ],
+      "stock": 11,
+      "category": "mochilas",
+      "quantity": 1,
+      "colores": [
+        "Rojo",
+        "Celeste"
+      ],
+      "tags": [
+        "Mochilas",
+        "Geometric",
+        "Escolar"
+      ]
+    },
+    {
+      "id": "a882",
+      "name": "Matero Haversack, PU",
+      "price": 25000,
+      "image": "/img/Materos/0699ac41-bec5-49ca-8a5e-de08adab1b18-Photoroom.jpg",
+      "images": [
+        "/img/Materos/0699ac41-bec5-49ca-8a5e-de08adab1b18-Photoroom.jpg",
+        "/img/Materos/cb880746-3c75-484a-8977-067533524371-Photoroom.jpg"
+      ],
+      "stock": "23",
+      "category": "materos",
+      "quantity": 11,
+      "colores": [
+        "Negro",
+        "Azul"
+      ],
+      "tags": [
+        "Materos",
+        "PU",
+        "Camuflado"
+      ],
+      "description": "El Matero, Tote, Mochila, de la marca HAVERSACK. Con una capacidad de 16 L, podrás disfrutar de tus mates en cualquier momento del día. Su material de Poliuretano (PU) lo hace resistente y duradero, perfecto para su uso diario. Además, su interior forrado y con divisor interno acolchado te permite organizar tus utensilios de manera práctica y segura, el mismo está asegurado al interior con un velcro, si lo retiras de una manera muy fácil, lo utilizas como un tote o una mochila."
+    },
+    {
+      "id": "0dce",
+      "name": "Carteron de viaje Impermeable ",
+      "description": "Descubrí el Carterón de Viaje Grande Línea Andorra, la opción ideal para quienes buscan un bolso resistente y funcional sin perder estilo. Fabricado en tela de poliéster cubierta con una lámina engomada en su reverso, es repelente al agua y resistente a los desgarros, perfecto para proteger tus pertenencias en cualquier aventura.\n\nCon una capacidad de 30 litros y medidas de 50 cm de ancho, 18 cm de profundidad y 34 cm de altura, ofrece amplio espacio para todo lo que necesites. ",
+      "images": [
+        "/img/Bolsos/bolso negro-Photoroom-Photoroom.jpg",
+        "/img/Bolsos/bolso rojo-Photoroom-Photoroom.jpg",
+        "/img/Bolsos/bolso rosa-Photoroom-Photoroom.jpg"
+      ],
+      "stock": "23",
+      "price": "58000",
+      "category": "bolsos",
+      "tags": [
+        "Bolsos",
+        "Viaje",
+        "Impermeable"
+      ],
+      "colores": [
+        "Negro",
+        "Rojo",
+        "Fucsia"
+      ]
+    },
+    {
+      "id": "f1e6",
+      "name": "Bandolera Andorra",
+      "description": "Descubre la Bandolera Línea Andorra, un accesorio que combina elegancia y resistencia, ideal para la mujer moderna. Con unas medidas de 24 cm de ancho, 7 cm de profundidad y 18 cm de altura, es perfecta para acompañarte en tu día a día.\n\nEsta cartera está confeccionada en material sintético Andorra, que incluye una lámina engomada que la hace extremadamente resistente a desgarros, tirones y al agua. Su interior está forrado en un poliéster fino, manteniendo la misma durabilidad que la tela exterior.",
+      "images": [
+        "/img/Accesorios/cartera negra  2-Photoroom.jpg",
+        "/img/Accesorios/cartera azul 2-Photoroom.jpg",
+        "/img/Accesorios/cartera roja 2-Photoroom.jpg"
+      ],
+      "stock": "12",
+      "price": "20000",
+      "category": "accesorios",
+      "tags": [
+        "Accesorios",
+        "Bandolera",
+        "Andorra"
+      ],
+      "colores": [
+        "Negro",
+        "Rojo",
+        "Azul"
+      ]
+    },
+    {
+      "name": "Matero-tote",
+      "description": "El Matero, Tote HAVERSACK. Con una capacidad de 16 L, podrás disfrutar de tus mates en cualquier momento del día. Su material de Poliuretano (PU) lo hace resistente y duradero, perfecto para su uso diario. Además, su interior forrado y con divisor interno acolchado te permite organizar tus utensilios de manera práctica y segura, el mismo está asegurado al interior con un velcro, si lo retiras de una manera muy fácil, lo utilizas como un tote o una mochila. ",
+      "images": [
+        "/img/Materos/DSC_6165-Photoroom-Photoroom.jpg"
+      ],
+      "stock": 10,
+      "price": "43000",
+      "category": "materos",
+      "tags": [
+        "Matero",
+        "Tote",
+        "Verano",
+        "negro"
+      ],
+      "colores": [
+        "Negro"
+      ],
+      "id": "BDsP4Ov"
+    },
+    {
+      "name": "Matero Andorra",
+      "description": "Este bolso matero Andorra de HAVERSACK es ideal para llevar tus infusiones favoritas a donde vayas. Con una capacidad de 20 L, podrás disfrutar de tus mates en cualquier momento del día. Su material de cordura lo hace resistente y duradero, perfecto para un uso diario. Además, su interior forrado y acolchado con divisor te permite organizar tus utensilios de manera práctica y segura.",
+      "images": [
+        "/img\\Materos\\IMG_5660-cuadrada-Photoroom.jpg",
+        "/img\\Materos\\IMG_5668-cuadrada-Photoroom.jpg"
+      ],
+      "stock": "20",
+      "price": "33000",
+      "category": "materos",
+      "tags": [
+        "Matero",
+        "Andorra",
+        "Verano",
+        ""
+      ],
+      "colores": [
+        "Negro",
+        "Azul"
+      ],
+      "id": "eVhtTcG"
+    },
+    {
+      "name": "Matero Andorra - Camuflado",
+      "description": "Este Matero Haversack de la marca Haversack es ideal para los amantes de la naturaleza y la aventura. Con una capacidad de 17 L y un diseño de cordura camuflado, este bolso es perfecto para llevar todo lo que necesitas en tus salidas al aire libre. Además, su forro impermeable te mantendrá protegido en cualquier clima. \n\nCon un tamaño de 40 cm de largo, 28 cm de ancho y 18 cm de profundidad, este Matero con bolsillo te ofrece espacio más que suficiente para llevar tus pertenencias de forma organizada.",
+      "images": [
+        "/img\\Materos\\Captura de pantalla 2025-04-22 204544-Photoroom.jpg",
+        "/img\\Materos\\Captura de pantalla 2025-04-22 204613-Photoroom.jpg"
+      ],
+      "stock": "23",
+      "price": "36000",
+      "category": "materos",
+      "tags": [
+        "Matero",
+        "Andorra",
+        "Verano",
+        "Camuflado"
+      ],
+      "colores": [
+        "Amarillo",
+        "Fucsia"
+      ],
+      "id": "eZYFHNA"
+    },
+    {
+      "name": "Mochila Fashion - PU Black",
+      "description": "Descubre la Mochila Haversack, una pieza diseñada para quienes buscan una solución práctica y elegante en su día a día. Confeccionada en tela PU, un cuero sintético 100% vegano, esta mochila es un compromiso con el medio ambiente y la ética, evitando la crueldad animal.",
+      "images": [
+        "/img\\Mochilas\\mochila ANNITA - 1-Photoroom.jpg",
+        "/img\\Mochilas\\mochila ANNITA - 5-Photoroom.jpg"
+      ],
+      "stock": "15",
+      "price": "33999",
+      "category": "mochilas",
+      "tags": [
+        "Mochila",
+        "Fashion",
+        "PU"
+      ],
+      "colores": [
+        "Negro"
+      ],
+      "id": "d7YbOzv"
+    },
+    {
+      "name": "Bolso de Viaje - PU ",
+      "description": "El Bolso Grande en PU Simil Cuero de Haversack es la elección perfecta para quienes buscan un accesorio versátil y funcional. Con una capacidad de 46 litros, este bolso es ideal para viajes, actividades deportivas o uso urbano. Su diseño en material simil cuero liso combinado con el mismo material camuflado, dandole estilo y resistencia, asegurando que puedas llevar tus pertenencias de manera segura y con elegancia.",
+      "images": [
+        "/img\\Bolsos\\DSC_6121-Photoroom-Photoroom.jpg",
+        "/img\\Bolsos\\DSC_6138-Photoroom-Photoroom.jpg"
+      ],
+      "stock": "21",
+      "price": "60000",
+      "category": "bolsos",
+      "tags": [
+        "Bolso",
+        "Viaje",
+        "PU",
+        "SimilCuero"
+      ],
+      "colores": [
+        "Negro",
+        "Azul"
+      ],
+      "id": "apMZKfv"
+    },
+    {
+      "name": "Bolso Xtream - Andorra",
+      "description": "BOLSO DE GRAN CAPACIDAD PARA USO DEPORTIVO, ENTRENAMIENTO O VIAJE.\n\nPOSEE UN EXPANSOR EN SU BASE QUE HACE AUMENTAR UN 40% SU CAPACIDAD\n\nMEDIDAS C/ EXPANSOR CERRADO: 62CM ANCHO X 30CM DE PROF. X 30CM DE ALTURA\n\nMEDIDAS C/EXPANSOR ABIERTO:    62CM ANCHO X 30CM DE PROF. X 42CM DE ALTURA\n\nPASA DE 56 LITROS A 78 LITROS\n\nBOLSILLO LATERAL CON BOLSA HUMEDA PARA GUARDAR ROPA O CALZADOS\n\nCOSTURAS REFORZADAS ",
+      "images": [
+        "/img\\Bolsos\\IMG_6445-Photoroom.jpg",
+        "/img\\Bolsos\\IMG_6461-Photoroom.jpg"
+      ],
+      "stock": "10",
+      "price": "70000",
+      "category": "bolsos",
+      "tags": [
+        "Bolsos",
+        "Viaje",
+        "Xtream",
+        ""
+      ],
+      "colores": [
+        "Azul",
+        "Negro"
+      ],
+      "id": "B1pd0s4"
+    },
+    {
+      "name": "Bolso Fitness Cordura",
+      "description": "El Bolso Fitness de Haversack es la solución ideal para quienes buscan funcionalidad y estilo en su rutina de ejercicios. Con una capacidad de 24 litros, este bolso cuenta con un diseño táctico que se adapta a tus necesidades, permitiéndote llevar todo lo esencial para tus entrenamientos, como el Yoga Mat sujetado con las hebillas estratégicamente con elásticos en su frente. ",
+      "images": [
+        "/img\\Bolsos\\IMG_6010-Photoroom.jpg",
+        "/img\\Bolsos\\IMG_6008-Photoroom.jpg"
+      ],
+      "stock": "15",
+      "price": "45000",
+      "category": "bolsos",
+      "tags": [
+        "Bolsos",
+        "Fitness",
+        "Cordura"
+      ],
+      "colores": [
+        "Azul",
+        "Negro"
+      ],
+      "id": "4f7UNQe"
+    },
+    {
+      "name": "Riñoneras Cordura",
+      "description": "art. 6080",
+      "images": [
+        "/img\\Accesorios\\4-Photoroom.jpg",
+        "/img\\Accesorios\\38-Photoroom.jpg",
+        "/img\\Accesorios\\21-Photoroom.jpg"
+      ],
+      "stock": "19",
+      "price": "11000",
+      "category": "accesorios",
+      "tags": [
+        "Accesorios",
+        "Riñoneras",
+        "Cordura"
+      ],
+      "colores": [
+        "Negro",
+        "Azul",
+        "Verde"
+      ],
+      "id": "6r2USVJ"
+    },
+    {
+      "name": "Tote bag",
+      "description": "\nInicio > Accesorios > Tote bags > Tote Bag Student, C/ Porta Notebook, Bol. Int. 100% forrado\nTote Bag Student, C/ Porta Notebook, Bol. Int. 100% forrado\n$31.990,00 $35.000,00\n10% de descuento pagando con Transferencia o depósito\n24 cuotas de $3.285,64\n\nVer medios de pago\nColor: Rojo\nCantidad\n\nCARTERA TOTE BAG STUDENT, CON CIERRE, PORTA NOTEBOOK Y BOLSILLO INTERNO\n\nTELA PRINCIPAL ANDORRA, material sintetico con una lámina engomada lo que la hace muy resistente a los desgarros, tirones, y totalmente resistente al agua.",
+      "images": [
+        "/img\\Accesorios\\Captura de pantalla 2025-04-22 002248-Photoroom.jpg",
+        "/img\\Accesorios\\Captura de pantalla 2025-04-22 002315-Photoroom.jpg",
+        "/img\\Accesorios\\Captura de pantalla 2025-04-22 002340-Photoroom.jpg"
+      ],
+      "stock": "16",
+      "price": "31990",
+      "category": "accesorios",
+      "tags": [
+        "Accesorios",
+        "TeteBag",
+        "PortaNotebook"
+      ],
+      "colores": [
+        "Rojo",
+        "Negro",
+        "Azul"
+      ],
+      "id": "ViW8ORN"
+    },
+    {
+      "name": "Bandolera Cordura",
+      "description": "La bandolera porta celular de HAVERSACK es la elección perfecta para la mujer moderna que busca funcionalidad y estilo en su día a día. Fabricada en microfibra de alta calidad, esta mini bag combina durabilidad y ligereza, permitiendo llevar lo esencial de manera cómoda y segura. Su diseño incluye dos compartimientos con cierre que garantiza la protección de tus pertenencias, mientras que el forro interior de 100% polyester añade un toque de elegancia.",
+      "images": [
+        "/img\\Accesorios\\Captura de pantalla 2025-04-23 005800-Photoroom.jpg",
+        "/img\\Accesorios\\Captura de pantalla 2025-04-23 005837-Photoroom.jpg",
+        "/img\\Accesorios\\Captura de pantalla 2025-04-23 005950-Photoroom.jpg"
+      ],
+      "stock": "9",
+      "price": "14000",
+      "category": "accesorios",
+      "tags": [
+        "Accesorios",
+        "Bandolera",
+        "Cordura"
+      ],
+      "colores": [
+        "Negro",
+        "Azul",
+        "Fucsia"
+      ],
+      "id": "6j9qX41"
+    },
+    {
+      "name": "Mochila Clasic - Cordura ",
+      "description": "La mochila clásica Haversack es la compañera ideal para tus viajes y actividades diarias. Con una capacidad de 17 litros,\n su diseño urbano y escolar se adapta perfectamente a las necesidades de los adultos que buscan funcionalidad y estilo. \nFabricada en 100% poliamida, esta mochila es reforzada, lo que garantiza durabilidad y resistencia en el uso diario.\nCon dimensiones de 42 cm de altura, 30 cm de ancho y 14 cm de profundidad, es lo suficientemente espaciosa para llevar \nlo esencial sin ser voluminosa.\n",
+      "images": [
+        "/img\\Mochilas\\59-Photoroom.jpg",
+        "/img\\Mochilas\\62-Photoroom.jpg"
+      ],
+      "stock": "43",
+      "price": "16000",
+      "category": "mochilas",
+      "tags": [
+        "Mochila",
+        "Clasic",
+        "Cordura",
+        ""
+      ],
+      "colores": [
+        "Negro",
+        "Rojo"
+      ],
+      "id": "4gDpisA"
+    }
+  ],
+  "users": [
+    {
+      "id": "1",
+      "email": "test@haversack.com",
+      "password": "test123",
+      "nombre": "Test",
+      "apellido": "User",
+      "usuario": "testuser",
+      "name": "Test User",
+      "address": "Test Address",
+      "phone": "+54 11 0000-0000"
+    },
+    {
+      "id": "2",
+      "email": "admin@haversack.com",
+      "password": "admin123",
+      "nombre": "Admin",
+      "apellido": "User",
+      "usuario": "admin",
+      "name": "Admin User",
+      "address": "admin address",
+      "phone": "+54 11 0000-0000"
+    },
+    {
+      "nombre": "juan",
+      "apellido": "test",
+      "email": "juan@example.com",
+      "phone": "juan@example.com",
+      "password": "juan123",
+      "confirmPassword": "juan123",
+      "name": "juan test",
+      "address": "",
+      "id": "4Jdlb7m"
+    }
+  ],
+  "cart": [],
+  "orders": [
+    {
+      "nombre": "Felipe",
+      "apellido": "Galli",
+      "email": "felipegall1.fg@gmail.com",
+      "telefono": "01151381794",
+      "productos": [
+        {
+          "id": "4f7UNQe",
+          "name": "Bolso Fitness Cordura",
+          "cantidad": 1,
+          "precio": 45000
+        }
+      ],
+      "total": 45000,
+      "fecha": "2025-09-17T14:24:58.854Z",
+      "id": 1
+    },
+    {
+      "nombre": "aaaa",
+      "apellido": "bbbb",
+      "email": "aaaa@test.com",
+      "telefono": "2901902012",
+      "productos": [
+        {
+          "id": "a882",
+          "name": "Matero Haversack, PU",
+          "cantidad": 20,
+          "precio": 25000
+        }
+      ],
+      "total": 500000,
+      "fecha": "2025-09-17T15:17:15.834Z",
+      "id": 2
+    },
+    {
+      "nombre": "aaaa",
+      "apellido": "bbbb",
+      "email": "aaaa@test.com",
+      "telefono": "123455678",
+      "productos": [
+        {
+          "id": "0dce",
+          "name": "Carteron de viaje Impermeable ",
+          "cantidad": 10,
+          "precio": 58000
+        }
+      ],
+      "total": 580000,
+      "fecha": "2025-09-17T15:39:20.431Z",
+      "id": 3
+    }
+  ]
+}
