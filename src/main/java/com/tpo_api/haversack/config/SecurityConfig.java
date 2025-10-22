@@ -23,10 +23,42 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authz -> authz
-                .anyRequest().permitAll()  // Permitir todo temporalmente para pruebas
+                // Rutas completamente públicas (sin autenticación)
+                .requestMatchers("/api").permitAll()
+                .requestMatchers("/api/users/register").permitAll()
+                .requestMatchers("/api/users/login").permitAll()
+                
+                // Rutas de consulta pública para productos y categorías (solo GET)
+                .requestMatchers("GET", "/api/products/**").permitAll()
+                .requestMatchers("GET", "/api/categories/**").permitAll()
+                
+                // Rutas administrativas que requieren autenticación
+                .requestMatchers("POST", "/api/products/**").authenticated()
+                .requestMatchers("PUT", "/api/products/**").authenticated()
+                .requestMatchers("DELETE", "/api/products/**").authenticated()
+                .requestMatchers("POST", "/api/categories/**").authenticated()
+                .requestMatchers("PUT", "/api/categories/**").authenticated()
+                .requestMatchers("DELETE", "/api/categories/**").authenticated()
+                
+                // Rutas de usuario que requieren autenticación
+                .requestMatchers("/api/users").authenticated()
+                .requestMatchers("/api/users/{id}").authenticated()
+                .requestMatchers("/api/users/email/{email}").authenticated()
+                .requestMatchers("PUT", "/api/users/**").authenticated()
+                .requestMatchers("DELETE", "/api/users/**").authenticated()
+                
+                // Rutas de carrito que requieren autenticación
+                .requestMatchers("/api/cart/**").authenticated()
+                
+                // Rutas de órdenes que requieren autenticación
+                .requestMatchers("/api/orders/**").authenticated()
+                
+                // Cualquier otra ruta requiere autenticación por defecto
+                .anyRequest().authenticated()
             )
             .headers(headers -> headers
-                .frameOptions(frameOptions -> frameOptions.disable())); // Para H2 Console
+                .frameOptions(frameOptions -> frameOptions.disable())) // Para H2 Console
+            .httpBasic(basic -> basic.realmName("Haversack API")); // Configurar HTTP Basic Auth
 
         return http.build();
     }

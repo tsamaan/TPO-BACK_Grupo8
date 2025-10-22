@@ -4,8 +4,10 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tpo_api.haversack.model.Product;
 import com.tpo_api.haversack.model.User;
+import com.tpo_api.haversack.model.Category;
 import com.tpo_api.haversack.repository.ProductRepository;
 import com.tpo_api.haversack.repository.UserRepository;
+import com.tpo_api.haversack.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
@@ -24,6 +26,7 @@ public class DataInitializer implements CommandLineRunner {
     
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
+    private final CategoryRepository categoryRepository;
     private final PasswordEncoder passwordEncoder;
     private final ObjectMapper objectMapper;
     
