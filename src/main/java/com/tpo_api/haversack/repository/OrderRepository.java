@@ -12,9 +12,9 @@ import java.util.List;
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
     
-    List<Order> findByEmailOrderByFechaDesc(String email);
+    List<Order> findByUsuario_EmailOrderByFechaDesc(String email);
     
-    List<Order> findByStatusOrderByFechaDesc(Order.OrderStatus status);
+    List<Order> findByEstadoOrderByFechaDesc(Order.OrderStatus estado);
     
     @Query("SELECT o FROM Order o WHERE o.fecha BETWEEN :startDate AND :endDate ORDER BY o.fecha DESC")
     List<Order> findByFechaBetween(@Param("startDate") LocalDateTime startDate, 

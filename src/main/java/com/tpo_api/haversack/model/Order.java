@@ -19,29 +19,24 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @Column(nullable = false)
-    private String nombre;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "usuario_id")
+    private User usuario;
     
-    @Column(nullable = false)
-    private String apellido;
-    
-    @Column(nullable = false)
-    private String email;
-    
-    @Column(nullable = false)
-    private String telefono;
-    
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<OrderItem> productos;
-    
-    @Column(nullable = false)
-    private Double total;
+    @Embedded
+    private Direccion direccion;
     
     @Column(nullable = false)
     private LocalDateTime fecha;
     
     @Enumerated(EnumType.STRING)
-    private OrderStatus status = OrderStatus.PENDING;
+    private OrderStatus estado = OrderStatus.PENDING;
+    
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<OrderItem> detallesPedido;
+    
+    @Column(nullable = false)
+    private Double total;
     
     public enum OrderStatus {
         PENDING, CONFIRMED, SHIPPED, DELIVERED, CANCELLED

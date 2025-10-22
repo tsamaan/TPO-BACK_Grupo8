@@ -35,9 +35,10 @@ public class User {
     
     private String name;
     
-    private String address;
-    
     private String phone;
+    
+    @Embedded
+    private Direccion direccion;
     
     @Enumerated(EnumType.STRING)
     private Role role = Role.USER;

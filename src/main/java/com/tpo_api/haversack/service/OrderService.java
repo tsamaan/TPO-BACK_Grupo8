@@ -1,9 +1,11 @@
 package com.tpo_api.haversack.service;
 
 import com.tpo_api.haversack.dto.OrderDTO;
+import com.tpo_api.haversack.model.Direccion;
 import com.tpo_api.haversack.model.Order;
 import com.tpo_api.haversack.model.OrderItem;
 import com.tpo_api.haversack.repository.OrderRepository;
+import com.tpo_api.haversack.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +20,7 @@ import java.util.stream.Collectors;
 public class OrderService {
     
     private final OrderRepository orderRepository;
+    private final UserRepository userRepository;
     
     public List<Order> getAllOrders() {
         return orderRepository.findAll();
@@ -28,11 +31,11 @@ public class OrderService {
     }
     
     public List<Order> getOrdersByEmail(String email) {
-        return orderRepository.findByEmailOrderByFechaDesc(email);
+        return orderRepository.findByUsuario_EmailOrderByFechaDesc(email);
     }
     
     public List<Order> getOrdersByStatus(Order.OrderStatus status) {
-        return orderRepository.findByStatusOrderByFechaDesc(status);
+        return orderRepository.findByEstadoOrderByFechaDesc(status);
     }
     
     public List<Order> getOrdersBetweenDates(LocalDateTime startDate, LocalDateTime endDate) {
@@ -47,13 +50,24 @@ public class OrderService {
     @Transactional
     public Order createOrder(OrderDTO orderDTO) {
         Order order = new Order();
-        order.setNombre(orderDTO.getNombre());
-        order.setApellido(orderDTO.getApellido());
-        order.setEmail(orderDTO.getEmail());
-        order.setTelefono(orderDTO.getTelefono());
+        
+        // Buscar usuario por email si se proporciona
+        if (orderDTO.getEmail() != null) {
+            userRepository.findByEmail(orderDTO.getEmail())
+                    .ifPresent(order::setUsuario);
+        }
+        
+        // Configurar dirección embebida
+        Direccion direccion = new Direccion();
+        // Aquí podrías extraer la dirección del DTO o usar datos del usuario
+        if (orderDTO.getNombre() != null && orderDTO.getApellido() != null) {
+            direccion.setCalle(orderDTO.getNombre() + " " + orderDTO.getApellido());
+        }
+        order.setDireccion(direccion);
+        
         order.setTotal(orderDTO.getTotal());
         order.setFecha(LocalDateTime.now());
-        order.setStatus(Order.OrderStatus.PENDING);
+        order.setEstado(Order.OrderStatus.PENDING);
         
         // Crear items de la orden
         List<OrderItem> orderItems = orderDTO.getProductos().stream()
@@ -68,7 +82,7 @@ public class OrderService {
                 })
                 .collect(Collectors.toList());
         
-        order.setProductos(orderItems);
+        order.setDetallesPedido(orderItems);
         
         return orderRepository.save(order);
     }
@@ -77,7 +91,7 @@ public class OrderService {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Order not found with id: " + id));
         
-        order.setStatus(status);
+        order.setEstado(status);
         return orderRepository.save(order);
     }
     

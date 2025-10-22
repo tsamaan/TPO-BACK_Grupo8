@@ -1,6 +1,7 @@
 package com.tpo_api.haversack.service;
 
 import com.tpo_api.haversack.dto.UserRegistrationDTO;
+import com.tpo_api.haversack.model.Direccion;
 import com.tpo_api.haversack.model.User;
 import com.tpo_api.haversack.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -56,8 +57,14 @@ public class UserService {
         user.setApellido(registrationDTO.getApellido());
         user.setUsuario(registrationDTO.getUsuario());
         user.setName(registrationDTO.getName());
-        user.setAddress(registrationDTO.getAddress());
         user.setPhone(registrationDTO.getPhone());
+        
+        // Configurar dirección embebida si se proporciona
+        if (registrationDTO.getAddress() != null) {
+            Direccion direccion = new Direccion();
+            direccion.setCalle(registrationDTO.getAddress());
+            user.setDireccion(direccion);
+        }
         user.setRole(User.Role.USER);
         
         return userRepository.save(user);
@@ -70,8 +77,14 @@ public class UserService {
         if (userDTO.getNombre() != null) user.setNombre(userDTO.getNombre());
         if (userDTO.getApellido() != null) user.setApellido(userDTO.getApellido());
         if (userDTO.getName() != null) user.setName(userDTO.getName());
-        if (userDTO.getAddress() != null) user.setAddress(userDTO.getAddress());
         if (userDTO.getPhone() != null) user.setPhone(userDTO.getPhone());
+        
+        // Actualizar dirección embebida si se proporciona
+        if (userDTO.getAddress() != null) {
+            Direccion direccion = new Direccion();
+            direccion.setCalle(userDTO.getAddress());
+            user.setDireccion(direccion);
+        }
         
         // Solo actualizar email si es diferente y no existe
         if (userDTO.getEmail() != null && !userDTO.getEmail().equals(user.getEmail())) {
