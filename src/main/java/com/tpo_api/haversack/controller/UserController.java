@@ -8,6 +8,8 @@ import com.tpo_api.haversack.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -114,6 +116,18 @@ public class UserController {
             response.put("message", "Token validation failed");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
+    }
+    
+    @GetMapping("/me")
+    public ResponseEntity<User> getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            String email = authentication.getName();
+            return userService.getUserByEmail(email)
+                    .map(ResponseEntity::ok)
+                    .orElse(ResponseEntity.notFound().build());
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
     
     @PutMapping("/{id}")

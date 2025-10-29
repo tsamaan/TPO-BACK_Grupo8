@@ -31,9 +31,15 @@ public class ProductController {
                 .orElse(ResponseEntity.notFound().build());
     }
     
-    @GetMapping("/category/{category}")
-    public ResponseEntity<List<Product>> getProductsByCategory(@PathVariable String category) {
-        List<Product> products = productService.getProductsByCategory(category);
+    @GetMapping("/category/{categoryId}")
+    public ResponseEntity<List<Product>> getProductsByCategory(@PathVariable Long categoryId) {
+        List<Product> products = productService.getProductsByCategory(categoryId);
+        return ResponseEntity.ok(products);
+    }
+    
+    @GetMapping("/category/name/{categoryName}")
+    public ResponseEntity<List<Product>> getProductsByCategoryName(@PathVariable String categoryName) {
+        List<Product> products = productService.getProductsByCategoryName(categoryName);
         return ResponseEntity.ok(products);
     }
     
@@ -59,10 +65,10 @@ public class ProductController {
     
     @GetMapping("/filter")
     public ResponseEntity<List<Product>> getFilteredProducts(
-            @RequestParam String category,
+            @RequestParam Long categoryId,
             @RequestParam Double minPrice,
             @RequestParam Double maxPrice) {
-        List<Product> products = productService.getProductsByCategoryAndPriceRange(category, minPrice, maxPrice);
+        List<Product> products = productService.getProductsByCategoryAndPriceRange(categoryId, minPrice, maxPrice);
         return ResponseEntity.ok(products);
     }
     

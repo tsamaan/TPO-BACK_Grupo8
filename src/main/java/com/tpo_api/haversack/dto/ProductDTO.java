@@ -12,7 +12,11 @@ public class ProductDTO {
     private String image;
     private List<String> images;
     private String stock;
-    private String category;
+    
+    // Soporte para ambas formas de especificar categoría
+    private Long categoryId;        // Por ID (recomendado)
+    private String categoryName;    // Por nombre (para compatibilidad)
+    
     private Integer quantity;
     private List<String> colores;
     private List<String> tags;
