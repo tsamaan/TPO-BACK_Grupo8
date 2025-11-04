@@ -48,20 +48,20 @@ public class SecurityConfig {
                 .requestMatchers("GET", "/api/categories/**").permitAll()
                 
                 // Rutas administrativas que requieren autenticación
-                .requestMatchers("POST", "/api/products/**").authenticated()
-                .requestMatchers("PUT", "/api/products/**").authenticated()
-                .requestMatchers("DELETE", "/api/products/**").authenticated()
-                .requestMatchers("POST", "/api/categories/**").authenticated()
-                .requestMatchers("PUT", "/api/categories/**").authenticated()
-                .requestMatchers("DELETE", "/api/categories/**").authenticated()
-                
+                .requestMatchers("POST", "/api/products/**").hasRole("ADMIN")
+                .requestMatchers("PUT", "/api/products/**").hasRole("ADMIN")
+                .requestMatchers("DELETE", "/api/products/**").hasRole("ADMIN")
+                .requestMatchers("POST", "/api/categories/**").hasRole("ADMIN")
+                .requestMatchers("PUT", "/api/categories/**").hasRole("ADMIN")
+                .requestMatchers("DELETE", "/api/categories/**").hasRole("ADMIN")
+
                 // Rutas de usuario que requieren autenticación
-                .requestMatchers("/api/users").authenticated()
-                .requestMatchers("/api/users/{id}").authenticated()
-                .requestMatchers("/api/users/email/{email}").authenticated()
-                .requestMatchers("PUT", "/api/users/**").authenticated()
-                .requestMatchers("DELETE", "/api/users/**").authenticated()
-                
+                .requestMatchers("/api/users").hasRole("ADMIN")
+                .requestMatchers("/api/users/{id}").hasRole("ADMIN")
+                .requestMatchers("/api/users/email/{email}").hasRole("ADMIN")
+                .requestMatchers("PUT", "/api/users/**").hasRole("ADMIN")
+                .requestMatchers("DELETE", "/api/users/**").hasRole("ADMIN")
+
                 // Rutas de carrito que requieren autenticación
                 .requestMatchers("/api/cart/**").authenticated()
                 
