@@ -1,6 +1,7 @@
 package com.tpo_api.haversack.repository;
 
 import com.tpo_api.haversack.model.Product;
+import com.tpo_api.haversack.model.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -11,7 +12,9 @@ import java.util.List;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, String> {
     
-    List<Product> findByCategory(String category);
+    List<Product> findByCategory(Category category);
+    
+    List<Product> findByCategoryId(Long categoryId);
     
     List<Product> findByNameContainingIgnoreCase(String name);
     
@@ -22,7 +25,7 @@ public interface ProductRepository extends JpaRepository<Product, String> {
     List<Product> findByTagsIn(@Param("tags") List<String> tags);
     
     @Query("SELECT p FROM Product p WHERE p.category = :category AND p.price BETWEEN :minPrice AND :maxPrice")
-    List<Product> findByCategoryAndPriceBetween(@Param("category") String category, 
+    List<Product> findByCategoryAndPriceBetween(@Param("category") Category category, 
                                                @Param("minPrice") Double minPrice, 
                                                @Param("maxPrice") Double maxPrice);
 }

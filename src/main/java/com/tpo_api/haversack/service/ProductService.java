@@ -2,7 +2,9 @@ package com.tpo_api.haversack.service;
 
 import com.tpo_api.haversack.dto.ProductDTO;
 import com.tpo_api.haversack.model.Product;
+import com.tpo_api.haversack.model.Category;
 import com.tpo_api.haversack.repository.ProductRepository;
+import com.tpo_api.haversack.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,7 @@ import java.util.Optional;
 public class ProductService {
     
     private final ProductRepository productRepository;
+    private final CategoryRepository categoryRepository;
     
     public List<Product> getAllProducts() {
         return productRepository.findAll();
@@ -23,7 +26,13 @@ public class ProductService {
         return productRepository.findById(id);
     }
     
-    public List<Product> getProductsByCategory(String category) {
+    public List<Product> getProductsByCategory(Long categoryId) {
+        return productRepository.findByCategoryId(categoryId);
+    }
+    
+    public List<Product> getProductsByCategoryName(String categoryName) {
+        Category category = categoryRepository.findByName(categoryName)
+                .orElseThrow(() -> new RuntimeException("Category not found: " + categoryName));
         return productRepository.findByCategory(category);
     }
     
@@ -39,7 +48,9 @@ public class ProductService {
         return productRepository.findByTagsIn(tags);
     }
     
-    public List<Product> getProductsByCategoryAndPriceRange(String category, Double minPrice, Double maxPrice) {
+    public List<Product> getProductsByCategoryAndPriceRange(Long categoryId, Double minPrice, Double maxPrice) {
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new RuntimeException("Category not found with id: " + categoryId));
         return productRepository.findByCategoryAndPriceBetween(category, minPrice, maxPrice);
     }
     
@@ -72,7 +83,18 @@ public class ProductService {
         product.setImage(dto.getImage());
         product.setImages(dto.getImages());
         product.setStock(dto.getStock());
-        product.setCategory(dto.getCategory());
+        
+        // Buscar la categoría por ID o nombre
+        if (dto.getCategoryId() != null) {
+            Category category = categoryRepository.findById(dto.getCategoryId())
+                    .orElseThrow(() -> new RuntimeException("Category not found with id: " + dto.getCategoryId()));
+            product.setCategory(category);
+        } else if (dto.getCategoryName() != null) {
+            Category category = categoryRepository.findByName(dto.getCategoryName())
+                    .orElseThrow(() -> new RuntimeException("Category not found with name: " + dto.getCategoryName()));
+            product.setCategory(category);
+        }
+        
         product.setQuantity(dto.getQuantity());
         product.setColores(dto.getColores());
         product.setTags(dto.getTags());
@@ -86,7 +108,18 @@ public class ProductService {
         if (dto.getImage() != null) product.setImage(dto.getImage());
         if (dto.getImages() != null) product.setImages(dto.getImages());
         if (dto.getStock() != null) product.setStock(dto.getStock());
-        if (dto.getCategory() != null) product.setCategory(dto.getCategory());
+        
+        // Actualizar categoría si se proporciona
+        if (dto.getCategoryId() != null) {
+            Category category = categoryRepository.findById(dto.getCategoryId())
+                    .orElseThrow(() -> new RuntimeException("Category not found with id: " + dto.getCategoryId()));
+            product.setCategory(category);
+        } else if (dto.getCategoryName() != null) {
+            Category category = categoryRepository.findByName(dto.getCategoryName())
+                    .orElseThrow(() -> new RuntimeException("Category not found with name: " + dto.getCategoryName()));
+            product.setCategory(category);
+        }
+        
         if (dto.getQuantity() != null) product.setQuantity(dto.getQuantity());
         if (dto.getColores() != null) product.setColores(dto.getColores());
         if (dto.getTags() != null) product.setTags(dto.getTags());
