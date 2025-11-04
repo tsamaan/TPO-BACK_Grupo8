@@ -1,5 +1,6 @@
 package com.tpo_api.haversack.controller;
 
+import com.tpo_api.haversack.config.JwtUtil;
 import com.tpo_api.haversack.dto.LoginDTO;
 import com.tpo_api.haversack.dto.UserRegistrationDTO;
 import com.tpo_api.haversack.model.User;
@@ -7,6 +8,8 @@ import com.tpo_api.haversack.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -20,6 +23,7 @@ import java.util.Map;
 public class UserController {
     
     private final UserService userService;
+    private final JwtUtil jwtUtil;
     
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
@@ -64,8 +68,17 @@ public class UserController {
             boolean isValid = userService.validateLogin(loginDTO.getEmail(), loginDTO.getPassword());
             if (isValid) {
                 User user = userService.getUserByEmail(loginDTO.getEmail()).orElse(null);
+                
+                // Generar token JWT
+                String token = jwtUtil.generateToken(
+                    user.getEmail(), 
+                    user.getId(), 
+                    user.getRole().name()
+                );
+                
                 response.put("success", true);
                 response.put("message", "Login successful");
+                response.put("token", token);
                 response.put("user", user);
                 return ResponseEntity.ok(response);
             } else {
@@ -78,6 +91,43 @@ public class UserController {
             response.put("message", "Login failed");
             return ResponseEntity.badRequest().body(response);
         }
+    }
+    
+    @GetMapping("/validate-token")
+    public ResponseEntity<Map<String, Object>> validateToken(@RequestHeader("Authorization") String authHeader) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            if (authHeader != null && authHeader.startsWith("Bearer ")) {
+                String token = authHeader.substring(7);
+                String email = jwtUtil.extractUsername(token);
+                
+                if (jwtUtil.validateToken(token)) {
+                    User user = userService.getUserByEmail(email).orElse(null);
+                    response.put("valid", true);
+                    response.put("user", user);
+                    return ResponseEntity.ok(response);
+                }
+            }
+            response.put("valid", false);
+            response.put("message", "Invalid or expired token");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        } catch (Exception e) {
+            response.put("valid", false);
+            response.put("message", "Token validation failed");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
+    }
+    
+    @GetMapping("/me")
+    public ResponseEntity<User> getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            String email = authentication.getName();
+            return userService.getUserByEmail(email)
+                    .map(ResponseEntity::ok)
+                    .orElse(ResponseEntity.notFound().build());
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
     
     @PutMapping("/{id}")

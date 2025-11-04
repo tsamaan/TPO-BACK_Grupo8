@@ -47,6 +47,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @Override
+    @SuppressWarnings("null")
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         ApiError error = new ApiError(HttpStatus.BAD_REQUEST.value(), "Validation Failed", "Se encontraron errores de validación", request.getDescription(false));
         for (var fieldErrorObj : ex.getBindingResult().getFieldErrors()) {
