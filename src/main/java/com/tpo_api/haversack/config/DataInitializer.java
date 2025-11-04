@@ -195,6 +195,26 @@ public class DataInitializer implements CommandLineRunner {
             
             userRepository.save(testUser);
             
+            
+
+            User superAdmin = new User();
+            superAdmin.setEmail("superadmin@haversack.com");
+            superAdmin.setPassword(passwordEncoder.encode("superadmin123"));
+            superAdmin.setNombre("Super");
+            superAdmin.setApellido("Admin");
+            superAdmin.setUsuario("superadmin");
+            superAdmin.setName("Super Admin");
+            superAdmin.setPhone("+54 11 1111-1111");
+
+            // Configurar dirección embebida para superAdmin
+            Direccion superAdminDireccion = new Direccion();
+            superAdminDireccion.setCalle("Super Admin Address");
+            superAdmin.setDireccion(superAdminDireccion);
+
+            superAdmin.setRole(User.Role.SUPERADMIN);
+
+            userRepository.save(superAdmin);
+
             log.info("Loaded default users");
         }
     }

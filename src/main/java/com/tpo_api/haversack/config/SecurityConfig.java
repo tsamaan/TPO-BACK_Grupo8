@@ -1,8 +1,11 @@
 package com.tpo_api.haversack.config;
 
-import lombok.RequiredArgsConstructor;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -10,19 +13,18 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.Arrays;
-import java.nio.charset.StandardCharsets;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tpo_api.haversack.exception.ApiError;
-import org.springframework.http.HttpStatus;
+
+import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
@@ -42,32 +44,37 @@ public class SecurityConfig {
                 .requestMatchers("/api").permitAll()
                 .requestMatchers("/api/users/register").permitAll()
                 .requestMatchers("/api/users/login").permitAll()
-                
+                .requestMatchers("/api/users/validate-token").permitAll()
+
                 // Rutas de consulta pública para productos y categorías (solo GET)
                 .requestMatchers("GET", "/api/products/**").permitAll()
                 .requestMatchers("GET", "/api/categories/**").permitAll()
-                
-                // Rutas administrativas que requieren autenticación
-                .requestMatchers("POST", "/api/products/**").hasRole("ADMIN")
-                .requestMatchers("PUT", "/api/products/**").hasRole("ADMIN")
-                .requestMatchers("DELETE", "/api/products/**").hasRole("ADMIN")
-                .requestMatchers("POST", "/api/categories/**").hasRole("ADMIN")
-                .requestMatchers("PUT", "/api/categories/**").hasRole("ADMIN")
-                .requestMatchers("DELETE", "/api/categories/**").hasRole("ADMIN")
 
-                // Rutas de usuario que requieren autenticación
-                .requestMatchers("/api/users").hasRole("ADMIN")
-                .requestMatchers("/api/users/{id}").hasRole("ADMIN")
-                .requestMatchers("/api/users/email/{email}").hasRole("ADMIN")
-                .requestMatchers("PUT", "/api/users/**").hasRole("ADMIN")
-                .requestMatchers("DELETE", "/api/users/**").hasRole("ADMIN")
+                // Rutas administrativas para productos y categorías (ADMIN o SUPERADMIN)
+                .requestMatchers("POST", "/api/products/**").hasAnyRole("ADMIN", "SUPERADMIN")
+                .requestMatchers("PUT", "/api/products/**").hasAnyRole("ADMIN", "SUPERADMIN")
+                .requestMatchers("DELETE", "/api/products/**").hasAnyRole("ADMIN", "SUPERADMIN")
+                .requestMatchers("POST", "/api/categories/**").hasAnyRole("ADMIN", "SUPERADMIN")
+                .requestMatchers("PUT", "/api/categories/**").hasAnyRole("ADMIN", "SUPERADMIN")
+                .requestMatchers("DELETE", "/api/categories/**").hasAnyRole("ADMIN", "SUPERADMIN")
+
+
+                // Rutas de consulta de usuarios (ADMIN o SUPERADMIN))
+                .requestMatchers("GET", "/api/users").hasAnyRole("ADMIN", "SUPERADMIN")
+                .requestMatchers("GET", "/api/users/{id}").hasAnyRole("ADMIN", "SUPERADMIN")
+                .requestMatchers("GET", "/api/users/email/{email}").hasAnyRole("ADMIN", "SUPERADMIN")
+                // Rutas de gestión de usuarios (solo SUPERADMIN)
+
+                .requestMatchers("PUT", "/api/users/{id}").hasRole("SUPERADMIN")
+                .requestMatchers("PUT", "/api/users/{id}/role").hasRole("SUPERADMIN")
+                .requestMatchers("DELETE", "/api/users/{id}").hasRole("SUPERADMIN")
 
                 // Rutas de carrito que requieren autenticación
                 .requestMatchers("/api/cart/**").authenticated()
-                
+
                 // Rutas de órdenes que requieren autenticación
                 .requestMatchers("/api/orders/**").authenticated()
-                
+
                 // Cualquier otra ruta requiere autenticación por defecto
                 .anyRequest().authenticated()
             )

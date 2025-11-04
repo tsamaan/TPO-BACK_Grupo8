@@ -126,4 +126,12 @@ public class UserService {
         }
         return false;
     }
+
+    public User changeUserRole(Long id, User.Role newRole) {
+        User user = userRepository.findById(id)
+            .orElseThrow(() -> new NotFoundException("User not found with id: " + id));
+
+        user.setRole(newRole);
+        return userRepository.save(user);
+    }
 }
