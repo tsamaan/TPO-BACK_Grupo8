@@ -100,10 +100,17 @@ public class DataInitializer implements CommandLineRunner {
                 List<Map<String, Object>> productsData = (List<Map<String, Object>>) data.get("products");
                 
                 for (Map<String, Object> productData : productsData) {
-                    Product product = objectMapper.convertValue(productData, Product.class);
+                    // Extraer el nombre de la categoría antes de convertir
+                    String categoryName = (String) productData.get("category");
+                    
+                    // Remover el campo category del map para evitar problemas de deserialización
+                    Map<String, Object> productDataWithoutCategory = new java.util.HashMap<>(productData);
+                    productDataWithoutCategory.remove("category");
+                    
+                    // Convertir el producto sin la categoría
+                    Product product = objectMapper.convertValue(productDataWithoutCategory, Product.class);
                     
                     // Buscar y asignar la categoría correspondiente
-                    String categoryName = (String) productData.get("category");
                     if (categoryName != null) {
                         Category category = categoryRepository.findByName(categoryName)
                                 .orElseThrow(() -> new RuntimeException("Category not found: " + categoryName));
