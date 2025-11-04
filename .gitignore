@@ -31,3 +31,9 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### temporalmente no se sube ###
+.dockerignore
+Dockerfile
+README-Docker.md
+docker-compose.yml
