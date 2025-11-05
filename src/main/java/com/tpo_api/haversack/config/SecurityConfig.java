@@ -64,26 +64,14 @@ public class SecurityConfig {
                 .requestMatchers("GET", "/api/users/{id}").hasAnyRole("ADMIN", "SUPERADMIN")
                 .requestMatchers("GET", "/api/users/email/{email}").hasAnyRole("ADMIN", "SUPERADMIN")
                 // Rutas de gestión de usuarios (solo SUPERADMIN)
-
+                .requestMatchers("POST", "/api/users/register-admin").hasRole("SUPERADMIN")
                 .requestMatchers("PUT", "/api/users/{id}").hasRole("SUPERADMIN")
                 .requestMatchers("PUT", "/api/users/{id}/role").hasRole("SUPERADMIN")
                 .requestMatchers("DELETE", "/api/users/{id}").hasRole("SUPERADMIN")
 
                 // Rutas de carrito que requieren autenticación
                 .requestMatchers("/api/cart/**").authenticated()
-<<<<<<< HEAD
-                
-                // Rutas de órdenes
-                .requestMatchers("/api/orders/guest").permitAll() // Permitir órdenes de invitados
-                .requestMatchers("/api/orders/email/**").authenticated() // Ver órdenes por email (usuario logueado)
-                .requestMatchers("/api/orders/**").authenticated() // Resto requiere autenticación
-                
-=======
 
-                // Rutas de órdenes que requieren autenticación
-                .requestMatchers("/api/orders/**").authenticated()
-
->>>>>>> origin/franco
                 // Cualquier otra ruta requiere autenticación por defecto
                 .anyRequest().authenticated()
             )

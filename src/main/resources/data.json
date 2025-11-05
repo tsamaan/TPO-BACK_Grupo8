@@ -366,7 +366,8 @@
       "usuario": "testuser",
       "name": "Test User",
       "address": "Test Address",
-      "phone": "+54 11 0000-0000"
+      "phone": "+54 11 0000-0000",
+      "role": "USER"
     },
     {
       "id": "2",
@@ -377,7 +378,20 @@
       "usuario": "admin",
       "name": "Admin User",
       "address": "admin address",
-      "phone": "+54 11 0000-0000"
+      "phone": "+54 11 0000-0000",
+      "role": "ADMIN"
+    },
+    {
+      "id": "3",
+      "email": "superadmin@haversack.com",
+      "password": "superadmin123",
+      "nombre": "Super",
+      "apellido": "Admin",
+      "usuario": "superadmin",
+      "name": "Super Admin",
+      "address": "Super Admin Address",
+      "phone": "+54 11 1111-1111",
+      "role": "SUPERADMIN"
     },
     {
       "nombre": "juan",
@@ -388,7 +402,8 @@
       "confirmPassword": "juan123",
       "name": "juan test",
       "address": "",
-      "id": "4Jdlb7m"
+      "id": "4Jdlb7m",
+      "role": "USER"
     }
   ],
   "cart": [],

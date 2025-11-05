@@ -185,4 +185,21 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
     }
+
+    @PostMapping("/register-admin")
+    public ResponseEntity<Map<String, Object>> registerAdmin(@RequestBody UserRegistrationDTO registrationDTO) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            // Registrar el usuario con rol ADMIN
+            User admin = userService.registerUserWithRole(registrationDTO, User.Role.ADMIN);
+            response.put("success", true);
+            response.put("message", "Admin registered successfully");
+            response.put("user", admin);
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        } catch (RuntimeException e) {
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
 }

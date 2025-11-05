@@ -1,12 +1,16 @@
 package com.tpo_api.haversack.service;
 
 import com.tpo_api.haversack.dto.ProductDTO;
+import com.tpo_api.haversack.dto.ProductVariantDTO;
 import com.tpo_api.haversack.model.Product;
 import com.tpo_api.haversack.model.Category;
+import com.tpo_api.haversack.model.ProductVariant;
 import com.tpo_api.haversack.repository.ProductRepository;
 import com.tpo_api.haversack.repository.CategoryRepository;
+import com.tpo_api.haversack.repository.ProductVariantRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,6 +21,7 @@ public class ProductService {
     
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
+    private final ProductVariantRepository productVariantRepository;
     
     public List<Product> getAllProducts() {
         return productRepository.findAll();
@@ -54,16 +59,43 @@ public class ProductService {
         return productRepository.findByCategoryAndPriceBetween(category, minPrice, maxPrice);
     }
     
+    @Transactional
     public Product createProduct(ProductDTO productDTO) {
         Product product = convertToEntity(productDTO);
-        return productRepository.save(product);
+        Product savedProduct = productRepository.save(product);
+        
+        // Crear variantes si se proporcionan
+        if (productDTO.getVariants() != null && !productDTO.getVariants().isEmpty()) {
+            for (ProductVariantDTO variantDTO : productDTO.getVariants()) {
+                ProductVariant variant = new ProductVariant();
+                variant.setProduct(savedProduct);
+                variant.setSku(variantDTO.getSku());
+                variant.setColor(variantDTO.getColor());
+                variant.setSize(variantDTO.getSize());
+                variant.setStock(variantDTO.getStock());
+                variant.setPriceModifier(variantDTO.getPriceModifier());
+                variant.setImageUrl(variantDTO.getImageUrl());
+                variant.setAvailable(variantDTO.getAvailable() != null ? variantDTO.getAvailable() : true);
+                
+                productVariantRepository.save(variant);
+            }
+        }
+        
+        return savedProduct;
     }
     
+    @Transactional
     public Product updateProduct(String id, ProductDTO productDTO) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
         
         updateProductFromDTO(product, productDTO);
+        
+        // Actualizar variantes si se proporcionan
+        if (productDTO.getVariants() != null) {
+            updateProductVariants(product, productDTO.getVariants());
+        }
+        
         return productRepository.save(product);
     }
     
@@ -121,8 +153,60 @@ public class ProductService {
         }
         
         if (dto.getTags() != null) product.setTags(dto.getTags());
+    }
+    
+    /**
+     * Actualiza las variantes de un producto
+     * Estrategia mejorada: actualiza variantes existentes por SKU o crea nuevas
+     */
+    private void updateProductVariants(Product product, List<ProductVariantDTO> variantDTOs) {
+        // Obtener variantes existentes
+        List<ProductVariant> existingVariants = productVariantRepository.findByProductId(product.getId());
         
-        // NOTA: Stock y colores ahora se gestionan mediante ProductVariant
-        // Para actualizar stock/colores, gestionar las variantes directamente
+        // Crear mapa de variantes existentes por SKU
+        var existingBySku = existingVariants.stream()
+                .collect(java.util.stream.Collectors.toMap(
+                    ProductVariant::getSku, 
+                    v -> v,
+                    (v1, v2) -> v1
+                ));
+        
+        // Crear set de SKUs que vienen en el DTO
+        var incomingSkus = variantDTOs.stream()
+                .map(ProductVariantDTO::getSku)
+                .collect(java.util.stream.Collectors.toSet());
+        
+        // Eliminar variantes que ya no están en el DTO
+        existingVariants.stream()
+                .filter(v -> !incomingSkus.contains(v.getSku()))
+                .forEach(productVariantRepository::delete);
+        
+        // Actualizar o crear variantes
+        for (ProductVariantDTO variantDTO : variantDTOs) {
+            ProductVariant variant = existingBySku.get(variantDTO.getSku());
+            
+            if (variant != null) {
+                // Actualizar variante existente
+                variant.setColor(variantDTO.getColor());
+                variant.setSize(variantDTO.getSize());
+                variant.setStock(variantDTO.getStock());
+                variant.setPriceModifier(variantDTO.getPriceModifier());
+                variant.setImageUrl(variantDTO.getImageUrl());
+                variant.setAvailable(variantDTO.getAvailable() != null ? variantDTO.getAvailable() : true);
+                productVariantRepository.save(variant);
+            } else {
+                // Crear nueva variante
+                variant = new ProductVariant();
+                variant.setProduct(product);
+                variant.setSku(variantDTO.getSku());
+                variant.setColor(variantDTO.getColor());
+                variant.setSize(variantDTO.getSize());
+                variant.setStock(variantDTO.getStock());
+                variant.setPriceModifier(variantDTO.getPriceModifier());
+                variant.setImageUrl(variantDTO.getImageUrl());
+                variant.setAvailable(variantDTO.getAvailable() != null ? variantDTO.getAvailable() : true);
+                productVariantRepository.save(variant);
+            }
+        }
     }
 }
