@@ -203,3 +203,5 @@ public class UserController {
         }
     }
 }
+
+//TODO: Revisar la separacion en capas. Controler maneja las solicitudes http. services maneja el modelo de negocio.

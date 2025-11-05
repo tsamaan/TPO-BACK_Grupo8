@@ -57,3 +57,5 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 }
+
+//TODO: revisar si hace falta agregar excepciones personalizadas para otros casos comunes
