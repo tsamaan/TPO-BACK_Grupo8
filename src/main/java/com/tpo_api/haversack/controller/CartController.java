@@ -28,32 +28,20 @@ public class CartController {
     
     @PostMapping("/user/{userId}")
     public ResponseEntity<CartItem> addToCart(@PathVariable Long userId, @RequestBody CartItemDTO cartItemDTO) {
-        try {
-            CartItem cartItem = cartService.addToCart(userId, cartItemDTO);
-            return ResponseEntity.status(HttpStatus.CREATED).body(cartItem);
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().build();
-        }
+        CartItem cartItem = cartService.addToCart(userId, cartItemDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(cartItem);
     }
     
     @DeleteMapping("/user/{userId}/product/{productId}")
     public ResponseEntity<Void> removeFromCart(@PathVariable Long userId, @PathVariable String productId) {
-        try {
-            cartService.removeFromCart(userId, productId);
-            return ResponseEntity.noContent().build();
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
+        cartService.removeFromCart(userId, productId);
+        return ResponseEntity.noContent().build();
     }
     
     @DeleteMapping("/user/{userId}")
     public ResponseEntity<Void> clearCart(@PathVariable Long userId) {
-        try {
-            cartService.clearCart(userId);
-            return ResponseEntity.noContent().build();
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
+        cartService.clearCart(userId);
+        return ResponseEntity.noContent().build();
     }
     
     @GetMapping("/user/{userId}/total")

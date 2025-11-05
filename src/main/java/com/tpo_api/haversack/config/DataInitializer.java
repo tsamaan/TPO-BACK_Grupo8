@@ -250,7 +250,18 @@ public class DataInitializer implements CommandLineRunner {
                         user.setDireccion(direccion);
                     }
                     
-                    user.setRole(User.Role.USER);
+                    // Leer el role desde el JSON, si no existe usar USER por defecto
+                    String roleString = (String) userData.get("role");
+                    if (roleString != null) {
+                        try {
+                            user.setRole(User.Role.valueOf(roleString.toUpperCase()));
+                        } catch (IllegalArgumentException e) {
+                            log.warn("Invalid role '{}' for user {}, defaulting to USER", roleString, user.getEmail());
+                            user.setRole(User.Role.USER);
+                        }
+                    } else {
+                        user.setRole(User.Role.USER);
+                    }
                     
                     userRepository.save(user);
                 }

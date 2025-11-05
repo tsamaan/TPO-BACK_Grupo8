@@ -117,21 +117,48 @@ public class UserService {
         }
         userRepository.deleteById(id);
     }
-    
-    public boolean validateLogin(String email, String password) {
-        Optional<User> userOpt = userRepository.findByEmail(email);
-        if (userOpt.isPresent()) {
-            User user = userOpt.get();
-            return passwordEncoder.matches(password, user.getPassword());
-        }
-        return false;
-    }
 
     public User changeUserRole(Long id, User.Role newRole) {
         User user = userRepository.findById(id)
             .orElseThrow(() -> new NotFoundException("User not found with id: " + id));
 
         user.setRole(newRole);
+        return userRepository.save(user);
+    }
+
+    public User registerUserWithRole(UserRegistrationDTO registrationDTO, User.Role role) {
+        // Validar que las contraseñas coincidan
+        if (!registrationDTO.getPassword().equals(registrationDTO.getConfirmPassword())) {
+            throw new BadRequestException("Passwords do not match");
+        }
+        
+        // Validar que el email no exista
+        if (userRepository.existsByEmail(registrationDTO.getEmail())) {
+            throw new ConflictException("Email already exists");
+        }
+        
+        // Validar que el usuario no exista (si se proporciona)
+        if (registrationDTO.getUsuario() != null && userRepository.existsByUsuario(registrationDTO.getUsuario())) {
+            throw new ConflictException("Username already exists");
+        }
+        
+        User user = new User();
+        user.setEmail(registrationDTO.getEmail());
+        user.setPassword(passwordEncoder.encode(registrationDTO.getPassword()));
+        user.setNombre(registrationDTO.getNombre());
+        user.setApellido(registrationDTO.getApellido());
+        user.setUsuario(registrationDTO.getUsuario());
+        user.setName(registrationDTO.getName());
+        user.setPhone(registrationDTO.getPhone());
+        
+        // Configurar dirección embebida si se proporciona
+        if (registrationDTO.getAddress() != null) {
+            Direccion direccion = new Direccion();
+            direccion.setCalle(registrationDTO.getAddress());
+            user.setDireccion(direccion);
+        }
+        user.setRole(role);
+        
         return userRepository.save(user);
     }
 }

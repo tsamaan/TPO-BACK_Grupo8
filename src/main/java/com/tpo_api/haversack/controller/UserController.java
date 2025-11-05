@@ -1,9 +1,12 @@
 package com.tpo_api.haversack.controller;
 
-import com.tpo_api.haversack.config.JwtUtil;
 import com.tpo_api.haversack.dto.LoginDTO;
 import com.tpo_api.haversack.dto.UserRegistrationDTO;
+import com.tpo_api.haversack.exception.BadRequestException;
+import com.tpo_api.haversack.exception.NotFoundException;
+import com.tpo_api.haversack.exception.UnauthorizedException;
 import com.tpo_api.haversack.model.User;
+import com.tpo_api.haversack.service.AuthService;
 import com.tpo_api.haversack.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,7 +26,7 @@ import java.util.Map;
 public class UserController {
     
     private final UserService userService;
-    private final JwtUtil jwtUtil;
+    private final AuthService authService;
     
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
@@ -33,123 +36,56 @@ public class UserController {
     
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable Long id) {
-        return userService.getUserById(id)
-                .map(user -> ResponseEntity.ok().body(user))
-                .orElse(ResponseEntity.notFound().build());
+        User user = userService.getUserById(id)
+                .orElseThrow(() -> new NotFoundException("User not found with id: " + id));
+        return ResponseEntity.ok(user);
     }
     
     @GetMapping("/email/{email}")
     public ResponseEntity<User> getUserByEmail(@PathVariable String email) {
-        return userService.getUserByEmail(email)
-                .map(user -> ResponseEntity.ok().body(user))
-                .orElse(ResponseEntity.notFound().build());
+        User user = userService.getUserByEmail(email)
+                .orElseThrow(() -> new NotFoundException("User not found with email: " + email));
+        return ResponseEntity.ok(user);
     }
     
     @PostMapping("/register")
     public ResponseEntity<Map<String, Object>> registerUser(@RequestBody UserRegistrationDTO registrationDTO) {
-        Map<String, Object> response = new HashMap<>();
-        try {
-            User user = userService.registerUser(registrationDTO);
-            response.put("success", true);
-            response.put("message", "User registered successfully");
-            response.put("user", user);
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
-        } catch (RuntimeException e) {
-            response.put("success", false);
-            response.put("message", e.getMessage());
-            return ResponseEntity.badRequest().body(response);
-        }
+        return authService.register(registrationDTO);
     }
     
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> loginUser(@RequestBody LoginDTO loginDTO) {
-        Map<String, Object> response = new HashMap<>();
-        try {
-            boolean isValid = userService.validateLogin(loginDTO.getEmail(), loginDTO.getPassword());
-            if (isValid) {
-                User user = userService.getUserByEmail(loginDTO.getEmail()).orElse(null);
-                
-                // Generar token JWT
-                String token = jwtUtil.generateToken(
-                    user.getEmail(), 
-                    user.getId(), 
-                    user.getRole().name()
-                );
-                
-                response.put("success", true);
-                response.put("message", "Login successful");
-                response.put("token", token);
-                response.put("user", user);
-                return ResponseEntity.ok(response);
-            } else {
-                response.put("success", false);
-                response.put("message", "Invalid credentials");
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-            }
-        } catch (Exception e) {
-            response.put("success", false);
-            response.put("message", "Login failed");
-            return ResponseEntity.badRequest().body(response);
-        }
+        return authService.login(loginDTO);
     }
     
     @GetMapping("/validate-token")
     public ResponseEntity<Map<String, Object>> validateToken(@RequestHeader("Authorization") String authHeader) {
-        Map<String, Object> response = new HashMap<>();
-        try {
-            if (authHeader != null && authHeader.startsWith("Bearer ")) {
-                String token = authHeader.substring(7);
-                String email = jwtUtil.extractUsername(token);
-                
-                if (jwtUtil.validateToken(token)) {
-                    User user = userService.getUserByEmail(email).orElse(null);
-                    response.put("valid", true);
-                    response.put("user", user);
-                    return ResponseEntity.ok(response);
-                }
-            }
-            response.put("valid", false);
-            response.put("message", "Invalid or expired token");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-        } catch (Exception e) {
-            response.put("valid", false);
-            response.put("message", "Token validation failed");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-        }
+        return authService.validateToken(authHeader);
     }
     
     @GetMapping("/me")
     public ResponseEntity<User> getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.isAuthenticated()) {
-            String email = authentication.getName();
-            return userService.getUserByEmail(email)
-                    .map(ResponseEntity::ok)
-                    .orElse(ResponseEntity.notFound().build());
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new UnauthorizedException("Not authenticated");
         }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        
+        String email = authentication.getName();
+        User user = userService.getUserByEmail(email)
+                .orElseThrow(() -> new NotFoundException("User not found"));
+        return ResponseEntity.ok(user);
     }
     
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody UserRegistrationDTO userDTO) {
-        try {
-            User updatedUser = userService.updateUser(id, userDTO);
-            return ResponseEntity.ok(updatedUser);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
+        User updatedUser = userService.updateUser(id, userDTO);
+        return ResponseEntity.ok(updatedUser);
     }
     
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        try {
-            userService.deleteUser(id);
-            return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+        userService.deleteUser(id);
+        return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{id}/role")
@@ -157,32 +93,43 @@ public class UserController {
             @PathVariable Long id,
             @RequestBody Map<String, String> request) {
         Map<String, Object> response = new HashMap<>();
+        
+        String roleString = request.get("role");
+        if (roleString == null) {
+            throw new BadRequestException("Role is required");
+        }
+
+        User.Role newRole;
+        if (!isValidRole(roleString)) {
+            throw new BadRequestException("Invalid role. Must be USER, ADMIN, or SUPERADMIN");
+        }
+        newRole = User.Role.valueOf(roleString.toUpperCase());
+
+        User updatedUser = userService.changeUserRole(id, newRole);
+        response.put("success", true);
+        response.put("message", "User role updated successfully");
+        response.put("user", updatedUser);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/register-admin")
+    public ResponseEntity<Map<String, Object>> registerAdmin(@RequestBody UserRegistrationDTO registrationDTO) {
+        Map<String, Object> response = new HashMap<>();
+        User admin = userService.registerUserWithRole(registrationDTO, User.Role.ADMIN);
+        response.put("success", true);
+        response.put("message", "Admin registered successfully");
+        response.put("user", admin);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    private boolean isValidRole(String roleString) {
         try {
-            String roleString = request.get("role");
-            if (roleString == null) {
-                response.put("success", false);
-                response.put("message", "Role is required");
-                return ResponseEntity.badRequest().body(response);
-            }
-
-            User.Role newRole;
-            try {
-                newRole = User.Role.valueOf(roleString.toUpperCase());
-            } catch (IllegalArgumentException e) {
-                response.put("success", false);
-                response.put("message", "Invalid role. Must be USER, ADMIN, or SUPERADMIN");
-                return ResponseEntity.badRequest().body(response);
-            }
-
-            User updatedUser = userService.changeUserRole(id, newRole);
-            response.put("success", true);
-            response.put("message", "User role updated successfully");
-            response.put("user", updatedUser);
-            return ResponseEntity.ok(response);
-        } catch (RuntimeException e) {
-            response.put("success", false);
-            response.put("message", e.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            User.Role.valueOf(roleString.toUpperCase());
+            return true;
+        } catch (IllegalArgumentException e) {
+            return false;
         }
     }
 }
+
+//TODO: Revisar la separacion en capas. Controler maneja las solicitudes http. services maneja el modelo de negocio.
