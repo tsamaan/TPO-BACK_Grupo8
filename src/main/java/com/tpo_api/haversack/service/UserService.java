@@ -117,15 +117,6 @@ public class UserService {
         }
         userRepository.deleteById(id);
     }
-    
-    public boolean validateLogin(String email, String password) {
-        Optional<User> userOpt = userRepository.findByEmail(email);
-        if (userOpt.isPresent()) {
-            User user = userOpt.get();
-            return passwordEncoder.matches(password, user.getPassword());
-        }
-        return false;
-    }
 
     public User changeUserRole(Long id, User.Role newRole) {
         User user = userRepository.findById(id)

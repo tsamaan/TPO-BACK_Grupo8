@@ -7,10 +7,12 @@ import com.tpo_api.haversack.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -18,6 +20,7 @@ public class AuthService {
     
     private final UserService userService;
     private final JwtUtil jwtUtil;
+    private final PasswordEncoder passwordEncoder;
     
     public ResponseEntity<Map<String, Object>> register(UserRegistrationDTO registrationDTO) {
         Map<String, Object> response = new HashMap<>();
@@ -34,10 +37,19 @@ public class AuthService {
         }
     }
     
+    private boolean validateLogin(String email, String password) {
+        Optional<User> userOpt = userService.getUserByEmail(email);
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+            return passwordEncoder.matches(password, user.getPassword());
+        }
+        return false;
+    }
+    
     public ResponseEntity<Map<String, Object>> login(LoginDTO loginDTO) {
         Map<String, Object> response = new HashMap<>();
         try {
-            boolean isValid = userService.validateLogin(loginDTO.getEmail(), loginDTO.getPassword());
+            boolean isValid = validateLogin(loginDTO.getEmail(), loginDTO.getPassword());
             if (isValid) {
                 User user = userService.getUserByEmail(loginDTO.getEmail()).orElse(null);
                 
