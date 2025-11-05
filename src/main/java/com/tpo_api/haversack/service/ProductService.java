@@ -29,6 +29,7 @@ public class ProductService {
     
     public Optional<Product> getProductById(String id) {
         return productRepository.findById(id);
+        // .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
     }
     
     public List<Product> getProductsByCategory(Long categoryId) {
@@ -210,3 +211,5 @@ public class ProductService {
         }
     }
 }
+
+//TODO: agregar manejo de excepciones personalizadas en el service para casos como "Producto no encontrado", "Categoría no encontrada", etc.

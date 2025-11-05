@@ -72,6 +72,13 @@ public class SecurityConfig {
                 // Rutas de carrito que requieren autenticación
                 .requestMatchers("/api/cart/**").authenticated()
 
+                // Rutas de pedidos/órdenes (requieren autenticación)
+                .requestMatchers("POST", "/api/orders/**").authenticated()
+                .requestMatchers("GET", "/api/orders/**").authenticated()
+                .requestMatchers("GET", "/api/orders/user/**").authenticated()
+                .requestMatchers("PUT", "/api/orders/**").hasAnyRole("ADMIN", "SUPERADMIN")
+                .requestMatchers("DELETE", "/api/orders/**").hasAnyRole("ADMIN", "SUPERADMIN")
+
                 // Cualquier otra ruta requiere autenticación por defecto
                 .anyRequest().authenticated()
             )
@@ -115,7 +122,7 @@ public class SecurityConfig {
 
         CorsConfiguration configuration = new CorsConfiguration();
  
-        configuration.setAllowedOriginPatterns(Arrays.asList("*"));
+        configuration.setAllowedOriginPatterns(Arrays.asList("http://localhost:5173"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
