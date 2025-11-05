@@ -118,7 +118,7 @@ public class SecurityConfig {
         // Configuración para desarrollo
         configuration.setAllowedOrigins(Arrays.asList(
             "http://localhost:5173",   // Vite frontend
-            "http://localhost:8080", 
+            "http://localhost:8080"
             // "https://www.haversack.com"   // en un futuro tendriamos que cambiar el localhost por esto
 
         ));
