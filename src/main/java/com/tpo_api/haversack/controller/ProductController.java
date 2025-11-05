@@ -13,6 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/products")
+//TODO: sacar esto y no usar *. ya esta definido en security config
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class ProductController {

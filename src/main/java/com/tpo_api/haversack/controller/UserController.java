@@ -1,13 +1,12 @@
 package com.tpo_api.haversack.controller;
 
-import com.tpo_api.haversack.config.JwtUtil;
 import com.tpo_api.haversack.dto.LoginDTO;
 import com.tpo_api.haversack.dto.UserRegistrationDTO;
 import com.tpo_api.haversack.exception.BadRequestException;
-import com.tpo_api.haversack.exception.InvalidCredentialsException;
 import com.tpo_api.haversack.exception.NotFoundException;
 import com.tpo_api.haversack.exception.UnauthorizedException;
 import com.tpo_api.haversack.model.User;
+import com.tpo_api.haversack.service.AuthService;
 import com.tpo_api.haversack.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -27,7 +26,7 @@ import java.util.Map;
 public class UserController {
     
     private final UserService userService;
-    private final JwtUtil jwtUtil;
+    private final AuthService authService;
     
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
@@ -51,60 +50,17 @@ public class UserController {
     
     @PostMapping("/register")
     public ResponseEntity<Map<String, Object>> registerUser(@RequestBody UserRegistrationDTO registrationDTO) {
-        Map<String, Object> response = new HashMap<>();
-        User user = userService.registerUser(registrationDTO);
-        response.put("success", true);
-        response.put("message", "User registered successfully");
-        response.put("user", user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return authService.register(registrationDTO);
     }
     
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> loginUser(@RequestBody LoginDTO loginDTO) {
-        Map<String, Object> response = new HashMap<>();
-        
-        boolean isValid = userService.validateLogin(loginDTO.getEmail(), loginDTO.getPassword());
-        if (!isValid) {
-            throw new InvalidCredentialsException("Invalid credentials");
-        }
-        
-        User user = userService.getUserByEmail(loginDTO.getEmail())
-                .orElseThrow(() -> new NotFoundException("User not found"));
-        
-        String token = jwtUtil.generateToken(
-            user.getEmail(), 
-            user.getId(), 
-            user.getRole().name()
-        );
-        
-        response.put("success", true);
-        response.put("message", "Login successful");
-        response.put("token", token);
-        response.put("user", user);
-        return ResponseEntity.ok(response);
+        return authService.login(loginDTO);
     }
     
     @GetMapping("/validate-token")
     public ResponseEntity<Map<String, Object>> validateToken(@RequestHeader("Authorization") String authHeader) {
-        Map<String, Object> response = new HashMap<>();
-        
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            throw new UnauthorizedException("Invalid or missing authorization header");
-        }
-        
-        String token = authHeader.substring(7);
-        
-        if (!jwtUtil.validateToken(token)) {
-            throw new UnauthorizedException("Invalid or expired token");
-        }
-        
-        String email = jwtUtil.extractUsername(token);
-        User user = userService.getUserByEmail(email)
-                .orElseThrow(() -> new NotFoundException("User not found"));
-        
-        response.put("valid", true);
-        response.put("user", user);
-        return ResponseEntity.ok(response);
+        return authService.validateToken(authHeader);
     }
     
     @GetMapping("/me")
@@ -167,3 +123,5 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }
+
+//TODO: Revisar la separacion en capas. Controler maneja las solicitudes http. services maneja el modelo de negocio.
