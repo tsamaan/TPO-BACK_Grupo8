@@ -1,0 +1,36 @@
+version: '3.8'
+services:
+  db:
+    image: mysql:8.0
+    container_name: haversack-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: haversack_db
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_USER: haversack
+      MYSQL_PASSWORD: haversackpass
+      TZ: UTC
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+  app:
+    build: .
+    container_name: haversack-app
+    restart: unless-stopped
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/haversack_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: haversack
+      SPRING_DATASOURCE_PASSWORD: haversackpass
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_SECURITY_USER_NAME: admin
+      SPRING_SECURITY_USER_PASSWORD: admin123
+      TZ: UTC
+    ports:
+      - "8080:8080"
+
+volumes:
+  db_data:

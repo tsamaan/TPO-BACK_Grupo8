@@ -1,0 +1,10 @@
+target
+.mvn
+.git
+.idea
+*.iml
+node_modules
+logs
+*.jar
+Dockerfile
+docker-compose.yml

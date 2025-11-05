@@ -19,15 +19,18 @@ public class ProductController {
     private final ProductService productService;
     
     @GetMapping
-    public ResponseEntity<List<Product>> getAllProducts() {
+    public ResponseEntity<List<ProductDTO>> getAllProducts() {
         List<Product> products = productService.getAllProducts();
-        return ResponseEntity.ok(products);
+        List<ProductDTO> productDTOs = products.stream()
+                .map(ProductDTO::fromProduct)
+                .toList();
+        return ResponseEntity.ok(productDTOs);
     }
     
     @GetMapping("/{id}")
-    public ResponseEntity<Product> getProductById(@PathVariable String id) {
+    public ResponseEntity<ProductDTO> getProductById(@PathVariable String id) {
         return productService.getProductById(id)
-                .map(product -> ResponseEntity.ok().body(product))
+                .map(product -> ResponseEntity.ok().body(ProductDTO.fromProduct(product)))
                 .orElse(ResponseEntity.notFound().build());
     }
     
