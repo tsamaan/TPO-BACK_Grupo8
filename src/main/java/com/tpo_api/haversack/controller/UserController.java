@@ -100,11 +100,10 @@ public class UserController {
         }
 
         User.Role newRole;
-        try {
-            newRole = User.Role.valueOf(roleString.toUpperCase());
-        } catch (IllegalArgumentException e) {
+        if (!isValidRole(roleString)) {
             throw new BadRequestException("Invalid role. Must be USER, ADMIN, or SUPERADMIN");
         }
+        newRole = User.Role.valueOf(roleString.toUpperCase());
 
         User updatedUser = userService.changeUserRole(id, newRole);
         response.put("success", true);
@@ -121,6 +120,15 @@ public class UserController {
         response.put("message", "Admin registered successfully");
         response.put("user", admin);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    private boolean isValidRole(String roleString) {
+        try {
+            User.Role.valueOf(roleString.toUpperCase());
+            return true;
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
     }
 }
 
