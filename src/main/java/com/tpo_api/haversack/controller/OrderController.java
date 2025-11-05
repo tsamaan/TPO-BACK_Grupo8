@@ -1,6 +1,7 @@
 package com.tpo_api.haversack.controller;
 
 import com.tpo_api.haversack.dto.OrderDTO;
+import com.tpo_api.haversack.exception.NotFoundException;
 import com.tpo_api.haversack.model.Order;
 import com.tpo_api.haversack.service.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -28,9 +29,9 @@ public class OrderController {
     
     @GetMapping("/{id}")
     public ResponseEntity<Order> getOrderById(@PathVariable Long id) {
-        return orderService.getOrderById(id)
-                .map(order -> ResponseEntity.ok().body(order))
-                .orElse(ResponseEntity.notFound().build());
+        Order order = orderService.getOrderById(id)
+                .orElseThrow(() -> new NotFoundException("Order not found with id: " + id));
+        return ResponseEntity.ok(order);
     }
     
     @GetMapping("/email/{email}")
@@ -64,44 +65,25 @@ public class OrderController {
     
     @PostMapping
     public ResponseEntity<Order> createOrder(@RequestBody OrderDTO orderDTO) {
-        try {
-            Order createdOrder = orderService.createOrder(orderDTO);
-            return ResponseEntity.status(HttpStatus.CREATED).body(createdOrder);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
+        Order createdOrder = orderService.createOrder(orderDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdOrder);
     }
     
     @PostMapping("/guest")
     public ResponseEntity<Order> createGuestOrder(@RequestBody OrderDTO orderDTO) {
-        try {
-            // Para órdenes de invitados, crear sin asociar a un usuario
-            Order createdOrder = orderService.createOrder(orderDTO);
-            return ResponseEntity.status(HttpStatus.CREATED).body(createdOrder);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
+        Order createdOrder = orderService.createOrder(orderDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdOrder);
     }
     
     @PutMapping("/{id}/status")
     public ResponseEntity<Order> updateOrderStatus(@PathVariable Long id, @RequestParam Order.OrderStatus status) {
-        try {
-            Order updatedOrder = orderService.updateOrderStatus(id, status);
-            return ResponseEntity.ok(updatedOrder);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
+        Order updatedOrder = orderService.updateOrderStatus(id, status);
+        return ResponseEntity.ok(updatedOrder);
     }
     
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteOrder(@PathVariable Long id) {
-        try {
-            orderService.deleteOrder(id);
-            return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+        orderService.deleteOrder(id);
+        return ResponseEntity.noContent().build();
     }
 }

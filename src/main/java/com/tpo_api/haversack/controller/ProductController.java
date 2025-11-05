@@ -1,6 +1,7 @@
 package com.tpo_api.haversack.controller;
 
 import com.tpo_api.haversack.dto.ProductDTO;
+import com.tpo_api.haversack.exception.NotFoundException;
 import com.tpo_api.haversack.model.Product;
 import com.tpo_api.haversack.service.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -29,9 +30,9 @@ public class ProductController {
     
     @GetMapping("/{id}")
     public ResponseEntity<ProductDTO> getProductById(@PathVariable String id) {
-        return productService.getProductById(id)
-                .map(product -> ResponseEntity.ok().body(ProductDTO.fromProduct(product)))
-                .orElse(ResponseEntity.notFound().build());
+        Product product = productService.getProductById(id)
+                .orElseThrow(() -> new NotFoundException("Product not found with id: " + id));
+        return ResponseEntity.ok(ProductDTO.fromProduct(product));
     }
     
     @GetMapping("/category/{categoryId}")
@@ -77,33 +78,19 @@ public class ProductController {
     
     @PostMapping
     public ResponseEntity<Product> createProduct(@RequestBody ProductDTO productDTO) {
-        try {
-            Product createdProduct = productService.createProduct(productDTO);
-            return ResponseEntity.status(HttpStatus.CREATED).body(createdProduct);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
+        Product createdProduct = productService.createProduct(productDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdProduct);
     }
     
     @PutMapping("/{id}")
     public ResponseEntity<Product> updateProduct(@PathVariable String id, @RequestBody ProductDTO productDTO) {
-        try {
-            Product updatedProduct = productService.updateProduct(id, productDTO);
-            return ResponseEntity.ok(updatedProduct);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
+        Product updatedProduct = productService.updateProduct(id, productDTO);
+        return ResponseEntity.ok(updatedProduct);
     }
     
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable String id) {
-        try {
-            productService.deleteProduct(id);
-            return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+        productService.deleteProduct(id);
+        return ResponseEntity.noContent().build();
     }
 }
