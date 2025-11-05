@@ -36,6 +36,7 @@ public class OrderController {
     @GetMapping("/email/{email}")
     public ResponseEntity<List<Order>> getOrdersByEmail(@PathVariable String email) {
         List<Order> orders = orderService.getOrdersByEmail(email);
+        System.out.println("Retrieved orders for email " + email + ": " + orders.size());
         return ResponseEntity.ok(orders);
     }
     
@@ -64,6 +65,17 @@ public class OrderController {
     @PostMapping
     public ResponseEntity<Order> createOrder(@RequestBody OrderDTO orderDTO) {
         try {
+            Order createdOrder = orderService.createOrder(orderDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdOrder);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+    
+    @PostMapping("/guest")
+    public ResponseEntity<Order> createGuestOrder(@RequestBody OrderDTO orderDTO) {
+        try {
+            // Para órdenes de invitados, crear sin asociar a un usuario
             Order createdOrder = orderService.createOrder(orderDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdOrder);
         } catch (Exception e) {

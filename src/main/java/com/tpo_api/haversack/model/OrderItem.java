@@ -1,10 +1,10 @@
 package com.tpo_api.haversack.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "order_items")
@@ -17,7 +17,7 @@ public class OrderItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @JsonIgnore
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
@@ -33,4 +33,12 @@ public class OrderItem {
     
     @Column(nullable = false)
     private Double precio;
+    
+    private Long variantId;
+    
+    private String sku;
+    
+    private String color;
+    
+    private String size;
 }

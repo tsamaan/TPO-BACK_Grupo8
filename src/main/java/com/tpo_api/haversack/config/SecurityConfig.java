@@ -71,10 +71,12 @@ public class SecurityConfig {
 
                 // Rutas de carrito que requieren autenticación
                 .requestMatchers("/api/cart/**").authenticated()
-
-                // Rutas de órdenes que requieren autenticación
-                .requestMatchers("/api/orders/**").authenticated()
-
+                
+                // Rutas de órdenes
+                .requestMatchers("/api/orders/guest").permitAll() // Permitir órdenes de invitados
+                .requestMatchers("/api/orders/email/**").authenticated() // Ver órdenes por email (usuario logueado)
+                .requestMatchers("/api/orders/**").authenticated() // Resto requiere autenticación
+                
                 // Cualquier otra ruta requiere autenticación por defecto
                 .anyRequest().authenticated()
             )

@@ -82,7 +82,6 @@ public class ProductService {
         product.setPrice(dto.getPrice());
         product.setImage(dto.getImage());
         product.setImages(dto.getImages());
-        product.setStock(dto.getStock());
         
         // Buscar la categoría por ID o nombre
         if (dto.getCategoryId() != null) {
@@ -95,9 +94,11 @@ public class ProductService {
             product.setCategory(category);
         }
         
-        product.setQuantity(dto.getQuantity());
-        product.setColores(dto.getColores());
         product.setTags(dto.getTags());
+        
+        // NOTA: Las variantes (stock, colores) se gestionan por separado
+        // No se crean automáticamente aquí, deben crearse mediante ProductVariant
+        
         return product;
     }
     
@@ -107,7 +108,6 @@ public class ProductService {
         if (dto.getPrice() != null) product.setPrice(dto.getPrice());
         if (dto.getImage() != null) product.setImage(dto.getImage());
         if (dto.getImages() != null) product.setImages(dto.getImages());
-        if (dto.getStock() != null) product.setStock(dto.getStock());
         
         // Actualizar categoría si se proporciona
         if (dto.getCategoryId() != null) {
@@ -120,8 +120,9 @@ public class ProductService {
             product.setCategory(category);
         }
         
-        if (dto.getQuantity() != null) product.setQuantity(dto.getQuantity());
-        if (dto.getColores() != null) product.setColores(dto.getColores());
         if (dto.getTags() != null) product.setTags(dto.getTags());
+        
+        // NOTA: Stock y colores ahora se gestionan mediante ProductVariant
+        // Para actualizar stock/colores, gestionar las variantes directamente
     }
 }
