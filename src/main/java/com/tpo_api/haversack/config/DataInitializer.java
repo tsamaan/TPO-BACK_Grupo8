@@ -264,6 +264,9 @@ public class DataInitializer implements CommandLineRunner {
     
     private void loadDefaultData() {
         // Cargar datos por defecto si falla la carga desde JSON
+        loadDefaultCategories();
+        loadDefaultProducts();
+        
         if (userRepository.count() == 0) {
             User admin = new User();
             admin.setEmail("admin@haversack.com");
@@ -302,6 +305,191 @@ public class DataInitializer implements CommandLineRunner {
             userRepository.save(testUser);
             
             log.info("Loaded default users");
+        }
+    }
+    
+    private void loadDefaultCategories() {
+        if (categoryRepository.count() == 0) {
+            Category mochilas = new Category();
+            mochilas.setName("Mochilas");
+            mochilas.setActive(true);
+            mochilas.setDescription("Mochilas para todas tus aventuras");
+            categoryRepository.save(mochilas);
+            
+            Category bolsos = new Category();
+            bolsos.setName("Bolsos");
+            bolsos.setActive(true);
+            bolsos.setDescription("Bolsos versátiles y elegantes");
+            categoryRepository.save(bolsos);
+            
+            Category materos = new Category();
+            materos.setName("Materos");
+            materos.setActive(true);
+            materos.setDescription("El compañero perfecto para tu mate");
+            categoryRepository.save(materos);
+            
+            Category accesorios = new Category();
+            accesorios.setName("Accesorios");
+            accesorios.setActive(true);
+            accesorios.setDescription("Complementos para tu día a día");
+            categoryRepository.save(accesorios);
+            
+            log.info("Loaded 4 default categories");
+        }
+    }
+    
+    private void loadDefaultProducts() {
+        if (productRepository.count() == 0) {
+            Category mochilas = categoryRepository.findByName("Mochilas").orElse(null);
+            Category bolsos = categoryRepository.findByName("Bolsos").orElse(null);
+            Category materos = categoryRepository.findByName("Materos").orElse(null);
+            Category accesorios = categoryRepository.findByName("Accesorios").orElse(null);
+            
+            int productCount = 0;
+            int variantCount = 0;
+            
+            // Producto 1: Mochila Urbana
+            if (mochilas != null) {
+                Product p1 = new Product();
+                p1.setId("mochila-urbana-001");
+                p1.setName("Mochila Urbana Pro");
+                p1.setDescription("Mochila ideal para la ciudad con compartimento para laptop");
+                p1.setPrice(25000.0);
+                p1.setCategory(mochilas);
+                p1.setImage("/img/Mochilas/mochila1.jpg");
+                productRepository.save(p1);
+                productCount++;
+                
+                // Variantes: Negro y Gris
+                ProductVariant v1 = new ProductVariant();
+                v1.setProduct(p1);
+                v1.setSku("MOCHURB-001-BLK");
+                v1.setColor("Negro");
+                v1.setStock(15);
+                v1.setAvailable(true);
+                v1.setPriceModifier(0.0);
+                v1.setImageUrl("/img/Mochilas/mochila1.jpg");
+                productVariantRepository.save(v1);
+                variantCount++;
+                
+                ProductVariant v2 = new ProductVariant();
+                v2.setProduct(p1);
+                v2.setSku("MOCHURB-001-GRY");
+                v2.setColor("Gris");
+                v2.setStock(10);
+                v2.setAvailable(true);
+                v2.setPriceModifier(0.0);
+                v2.setImageUrl("/img/Mochilas/mochila1-gris.jpg");
+                productVariantRepository.save(v2);
+                variantCount++;
+            }
+            
+            // Producto 2: Mochila Trekking
+            if (mochilas != null) {
+                Product p2 = new Product();
+                p2.setId("mochila-trekking-002");
+                p2.setName("Mochila Trekking Adventure");
+                p2.setDescription("Mochila de gran capacidad para tus aventuras al aire libre");
+                p2.setPrice(35000.0);
+                p2.setCategory(mochilas);
+                p2.setImage("/img/Mochilas/mochila2.jpg");
+                productRepository.save(p2);
+                productCount++;
+                
+                ProductVariant v3 = new ProductVariant();
+                v3.setProduct(p2);
+                v3.setSku("MOCHTREK-002-BLU");
+                v3.setColor("Azul");
+                v3.setStock(8);
+                v3.setAvailable(true);
+                v3.setPriceModifier(0.0);
+                v3.setImageUrl("/img/Mochilas/mochila2.jpg");
+                productVariantRepository.save(v3);
+                variantCount++;
+                
+                ProductVariant v4 = new ProductVariant();
+                v4.setProduct(p2);
+                v4.setSku("MOCHTREK-002-GRN");
+                v4.setColor("Verde");
+                v4.setStock(12);
+                v4.setAvailable(true);
+                v4.setPriceModifier(0.0);
+                v4.setImageUrl("/img/Mochilas/mochila2-verde.jpg");
+                productVariantRepository.save(v4);
+                variantCount++;
+            }
+            
+            // Producto 3: Bolso Bandolera
+            if (bolsos != null) {
+                Product p3 = new Product();
+                p3.setId("bolso-bandolera-003");
+                p3.setName("Bolso Bandolera Classic");
+                p3.setDescription("Bolso cruzado perfecto para el día a día");
+                p3.setPrice(18000.0);
+                p3.setCategory(bolsos);
+                p3.setImage("/img/Bolsos/bolso1.jpg");
+                productRepository.save(p3);
+                productCount++;
+                
+                ProductVariant v5 = new ProductVariant();
+                v5.setProduct(p3);
+                v5.setSku("BOLBAND-003-BRN");
+                v5.setColor("Marrón");
+                v5.setStock(20);
+                v5.setAvailable(true);
+                v5.setPriceModifier(0.0);
+                v5.setImageUrl("/img/Bolsos/bolso1.jpg");
+                productVariantRepository.save(v5);
+                variantCount++;
+                
+                ProductVariant v6 = new ProductVariant();
+                v6.setProduct(p3);
+                v6.setSku("BOLBAND-003-BLK");
+                v6.setColor("Negro");
+                v6.setStock(15);
+                v6.setAvailable(true);
+                v6.setPriceModifier(0.0);
+                v6.setImageUrl("/img/Bolsos/bolso1-negro.jpg");
+                productVariantRepository.save(v6);
+                variantCount++;
+            }
+            
+            // Producto 4: Matero Térmico
+            if (materos != null) {
+                Product p4 = new Product();
+                p4.setId("matero-termico-004");
+                p4.setName("Matero Térmico Premium");
+                p4.setDescription("Mantiene tu termo a la temperatura perfecta");
+                p4.setPrice(12000.0);
+                p4.setCategory(materos);
+                p4.setImage("/img/Materos/matero1.jpg");
+                productRepository.save(p4);
+                productCount++;
+                
+                ProductVariant v7 = new ProductVariant();
+                v7.setProduct(p4);
+                v7.setSku("MATER-004-RED");
+                v7.setColor("Rojo");
+                v7.setStock(25);
+                v7.setAvailable(true);
+                v7.setPriceModifier(0.0);
+                v7.setImageUrl("/img/Materos/matero1.jpg");
+                productVariantRepository.save(v7);
+                variantCount++;
+                
+                ProductVariant v8 = new ProductVariant();
+                v8.setProduct(p4);
+                v8.setSku("MATER-004-BLU");
+                v8.setColor("Azul");
+                v8.setStock(20);
+                v8.setAvailable(true);
+                v8.setPriceModifier(0.0);
+                v8.setImageUrl("/img/Materos/matero1-azul.jpg");
+                productVariantRepository.save(v8);
+                variantCount++;
+            }
+            
+            log.info("Loaded {} default products with {} variants", productCount, variantCount);
         }
     }
 }

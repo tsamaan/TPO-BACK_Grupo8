@@ -34,7 +34,7 @@ public class OrderService {
     }
     
     public List<Order> getOrdersByEmail(String email) {
-        return orderRepository.findByUsuario_EmailOrderByFechaDesc(email);
+        return orderRepository.findByEmailOrderByFechaDesc(email);
     }
     
     public List<Order> getOrdersByStatus(Order.OrderStatus status) {
@@ -56,8 +56,15 @@ public class OrderService {
         
         // Buscar usuario por email si se proporciona
         if (orderDTO.getEmail() != null) {
-            userRepository.findByEmail(orderDTO.getEmail())
-                    .ifPresent(order::setUsuario);
+            var userOptional = userRepository.findByEmail(orderDTO.getEmail());
+            if (userOptional.isPresent()) {
+                order.setUsuario(userOptional.get());
+            } else {
+                // Si no hay usuario, guardar como orden de invitado
+                order.setGuestName(orderDTO.getNombre() + " " + orderDTO.getApellido());
+                order.setGuestEmail(orderDTO.getEmail());
+                order.setGuestPhone(orderDTO.getTelefono());
+            }
         }
         
         // Configurar dirección embebida
@@ -97,6 +104,10 @@ public class OrderService {
                     item.setName(itemDTO.getName());
                     item.setCantidad(itemDTO.getCantidad());
                     item.setPrecio(itemDTO.getPrecio());
+                    item.setVariantId(itemDTO.getVariantId());
+                    item.setSku(itemDTO.getSku());
+                    item.setColor(itemDTO.getColor());
+                    item.setSize(itemDTO.getSize());
                     item.setOrder(order);
                     return item;
                 })

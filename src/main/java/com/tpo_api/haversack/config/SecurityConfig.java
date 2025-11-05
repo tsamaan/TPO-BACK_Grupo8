@@ -67,6 +67,7 @@ public class SecurityConfig {
                 
                 // Rutas de órdenes
                 .requestMatchers("/api/orders/guest").permitAll() // Permitir órdenes de invitados
+                .requestMatchers("/api/orders/email/**").authenticated() // Ver órdenes por email (usuario logueado)
                 .requestMatchers("/api/orders/**").authenticated() // Resto requiere autenticación
                 
                 // Cualquier otra ruta requiere autenticación por defecto

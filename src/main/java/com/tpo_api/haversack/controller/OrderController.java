@@ -36,6 +36,7 @@ public class OrderController {
     @GetMapping("/email/{email}")
     public ResponseEntity<List<Order>> getOrdersByEmail(@PathVariable String email) {
         List<Order> orders = orderService.getOrdersByEmail(email);
+        System.out.println("Retrieved orders for email " + email + ": " + orders.size());
         return ResponseEntity.ok(orders);
     }
     
