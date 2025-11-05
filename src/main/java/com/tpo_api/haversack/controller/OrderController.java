@@ -71,6 +71,17 @@ public class OrderController {
         }
     }
     
+    @PostMapping("/guest")
+    public ResponseEntity<Order> createGuestOrder(@RequestBody OrderDTO orderDTO) {
+        try {
+            // Para órdenes de invitados, crear sin asociar a un usuario
+            Order createdOrder = orderService.createOrder(orderDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdOrder);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+    
     @PutMapping("/{id}/status")
     public ResponseEntity<Order> updateOrderStatus(@PathVariable Long id, @RequestParam Order.OrderStatus status) {
         try {

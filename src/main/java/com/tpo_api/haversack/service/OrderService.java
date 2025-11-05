@@ -4,7 +4,9 @@ import com.tpo_api.haversack.dto.OrderDTO;
 import com.tpo_api.haversack.model.Direccion;
 import com.tpo_api.haversack.model.Order;
 import com.tpo_api.haversack.model.OrderItem;
+import com.tpo_api.haversack.model.ProductVariant;
 import com.tpo_api.haversack.repository.OrderRepository;
+import com.tpo_api.haversack.repository.ProductVariantRepository;
 import com.tpo_api.haversack.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,7 @@ public class OrderService {
     
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
+    private final ProductVariantRepository productVariantRepository;
     
     public List<Order> getAllOrders() {
         return orderRepository.findAll();
@@ -67,11 +70,28 @@ public class OrderService {
         
         order.setTotal(orderDTO.getTotal());
         order.setFecha(LocalDateTime.now());
-        order.setEstado(Order.OrderStatus.PENDING);
+        order.setEstado(Order.OrderStatus.CONFIRMED); // Cambiado a CONFIRMED para reflejar orden completada
         
-        // Crear items de la orden
+        // Crear items de la orden y reducir stock de las variantes
         List<OrderItem> orderItems = orderDTO.getProductos().stream()
                 .map(itemDTO -> {
+                    // Reducir stock de la variante si existe
+                    if (itemDTO.getVariantId() != null) {
+                        ProductVariant variant = productVariantRepository.findById(itemDTO.getVariantId())
+                                .orElseThrow(() -> new RuntimeException("Variante no encontrada: " + itemDTO.getVariantId()));
+                        
+                        // Verificar que hay suficiente stock
+                        if (variant.getStock() < itemDTO.getCantidad()) {
+                            throw new RuntimeException("Stock insuficiente para " + itemDTO.getName() + 
+                                    " (Color: " + variant.getColor() + "). Disponible: " + variant.getStock() + 
+                                    ", Solicitado: " + itemDTO.getCantidad());
+                        }
+                        
+                        // Reducir el stock
+                        variant.setStock(variant.getStock() - itemDTO.getCantidad());
+                        productVariantRepository.save(variant);
+                    }
+                    
                     OrderItem item = new OrderItem();
                     item.setProductId(itemDTO.getId());
                     item.setName(itemDTO.getName());
