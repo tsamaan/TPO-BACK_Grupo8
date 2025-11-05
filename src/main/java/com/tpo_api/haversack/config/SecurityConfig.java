@@ -118,27 +118,20 @@ public class SecurityConfig {
         // Configuración para desarrollo
         configuration.setAllowedOrigins(Arrays.asList(
             "http://localhost:5173",   // Vite frontend
-            "http://localhost:8080"    // Backend (para peticiones internas)
-            // TODO: Para producción, añadir:
-            // "https://tu-dominio.com",
-            // "https://www.tu-dominio.com"
+            "http://localhost:8080", 
+            // "https://www.haversack.com"   // en un futuro tendriamos que cambiar el localhost por esto
+
         ));
         
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList(
-            "Authorization",           // Para JWT tokens
-            "Content-Type",           // Para JSON requests
-            "Accept",                 // Para especificar formato de respuesta
-            "Origin",                 // Header de origen
-            "X-Requested-With",       // Para peticiones AJAX
-            "Access-Control-Request-Method",   // Para preflight requests
-            "Access-Control-Request-Headers"   // Para preflight requests
+            "Authorization",          
+            "Content-Type",          
+            "Accept"               
         ));
         configuration.setAllowCredentials(true);
         configuration.setExposedHeaders(Arrays.asList("Authorization"));
         
-        // Cache preflight por 1 hora (3600 segundos) para mejor rendimiento
-        configuration.setMaxAge(3600L);
         
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
