@@ -151,4 +151,38 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @PutMapping("/{id}/role")
+    public ResponseEntity<Map<String, Object>> changeUserRole(
+            @PathVariable Long id,
+            @RequestBody Map<String, String> request) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            String roleString = request.get("role");
+            if (roleString == null) {
+                response.put("success", false);
+                response.put("message", "Role is required");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            User.Role newRole;
+            try {
+                newRole = User.Role.valueOf(roleString.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                response.put("success", false);
+                response.put("message", "Invalid role. Must be USER, ADMIN, or SUPERADMIN");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            User updatedUser = userService.changeUserRole(id, newRole);
+            response.put("success", true);
+            response.put("message", "User role updated successfully");
+            response.put("user", updatedUser);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+    }
 }
