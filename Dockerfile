@@ -1,17 +1,28 @@
-## Multi-stage Dockerfile for building and running the Spring Boot app
-FROM eclipse-temurin:17-jdk-jammy as build
-WORKDIR /workspace
+# # Build stage
+# FROM maven:3.8.4-eclipse-temurin-21 AS build
+# WORKDIR /app
+# COPY pom.xml .
+# COPY src ./src
+# RUN mvn clean package -DskipTests
 
-# Copy maven wrapper and pom first to leverage Docker cache
-COPY mvnw mvnw.cmd pom.xml ./
-COPY src src
+# # Run stage
+# FROM eclipse-temurin:21-jdk
+# WORKDIR /app
+# COPY --from=build /app/target/*.jar app.jar
+# EXPOSE 8080
+# ENTRYPOINT ["java", "-jar", "app.jar"]
 
-RUN chmod +x ./mvnw && ./mvnw -DskipTests package -P !native
 
-FROM eclipse-temurin:17-jre-jammy
+# Build stage
+FROM maven:3.9.9-eclipse-temurin-21 AS build
 WORKDIR /app
-ARG JAR_FILE=target/*.jar
-COPY --from=build /workspace/target/*.jar app.jar
+COPY pom.xml .
+COPY src ./src
+RUN mvn clean package -DskipTests
 
+# Run stage
+FROM eclipse-temurin:21-jdk
+WORKDIR /app
+COPY --from=build /app/target/*.jar app.jar
 EXPOSE 8080
-ENTRYPOINT ["java","-jar","/app/app.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
