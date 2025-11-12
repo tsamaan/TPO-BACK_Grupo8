@@ -31,3 +31,17 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Docker ###
+# No ignorar los archivos de configuración Docker
+# pero sí ignorar archivos sensibles
+.env
+docker-compose.override.yml
+
+### Logs ###
+*.log
+logs/
+
+### Sistema Operativo ###
+.DS_Store
+Thumbs.db

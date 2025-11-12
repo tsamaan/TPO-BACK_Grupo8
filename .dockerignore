@@ -1,10 +1,38 @@
-target
-.mvn
-.git
-.idea
+# Archivos de construcción Maven
+target/
+.mvn/
+!target/*.jar
+
+# IDEs
+.idea/
+.vscode/
 *.iml
-node_modules
-logs
-*.jar
+*.ipr
+*.iws
+.project
+.classpath
+.settings/
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Docker
 Dockerfile
 docker-compose.yml
+
+# Node (por si hay algún frontend)
+node_modules/
+
+# Logs
+logs/
+*.log
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Documentación
+README.md
+*.md

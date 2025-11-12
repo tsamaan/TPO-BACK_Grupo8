@@ -1,5 +1,5 @@
-version: '3.8'
 services:
+  # Base de datos MySQL
   db:
     image: mysql:8.0
     container_name: haversack-db
@@ -14,23 +14,50 @@ services:
       - "3306:3306"
     volumes:
       - db_data:/var/lib/mysql
+    networks:
+      - haversack-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpassword"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
+  # Aplicación Spring Boot
   app:
-    build: .
+    build: 
+      context: .
+      dockerfile: Dockerfile
     container_name: haversack-app
     restart: unless-stopped
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     environment:
+      # Configuración de la base de datos
       SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/haversack_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: haversack
       SPRING_DATASOURCE_PASSWORD: haversackpass
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      
+      # Configuración de seguridad
       SPRING_SECURITY_USER_NAME: admin
       SPRING_SECURITY_USER_PASSWORD: admin123
+      
+      # Configuración JWT (debe coincidir con application.properties)
+      JWT_SECRET: haversack-secret-key-for-jwt-token-generation-must-be-at-least-256-bits-long-and-secure
+      JWT_EXPIRATION: 86400000
+      
+      # Zona horaria
       TZ: UTC
     ports:
       - "8080:8080"
+    networks:
+      - haversack-network
+
+networks:
+  haversack-network:
+    driver: bridge
 
 volumes:
   db_data:
+
