@@ -125,7 +125,56 @@ public class UserService {
         user.setRole(newRole);
         return userRepository.save(user);
     }
+    
+    /**
+     * Cambia el rol de un usuario validando el string del rol.
+     * @param id ID del usuario
+     * @param roleString String con el nombre del rol (case-insensitive)
+     * @return Usuario actualizado
+     * @throws NotFoundException si el usuario no existe
+     * @throws BadRequestException si el rol es inválido o nulo
+     */
+    public User changeUserRole(Long id, String roleString) {
+        if (roleString == null || roleString.trim().isEmpty()) {
+            throw new BadRequestException("Role is required");
+        }
+        
+        User.Role newRole;
+        try {
+            newRole = User.Role.valueOf(roleString.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException("Invalid role. Must be USER, ADMIN, or SUPERADMIN");
+        }
+        
+        return changeUserRole(id, newRole);
+    }
 
+    /**
+     * Obtiene el usuario actualmente autenticado desde el contexto de seguridad.
+     * @return Usuario autenticado
+     * @throws UnauthorizedException si no hay autenticación o es inválida
+     */
+    public User getCurrentAuthenticatedUser() {
+        org.springframework.security.core.Authentication authentication = 
+            org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new com.tpo_api.haversack.exception.UnauthorizedException("Not authenticated");
+        }
+        
+        String email = authentication.getName();
+        return getUserByEmail(email)
+                .orElseThrow(() -> new com.tpo_api.haversack.exception.NotFoundException("User not found"));
+    }
+    
+    /**
+     * Registra un usuario con un rol específico.
+     * @param registrationDTO Datos de registro
+     * @param role Rol a asignar
+     * @return Usuario registrado
+     * @throws BadRequestException si las contraseñas no coinciden
+     * @throws ConflictException si el email o usuario ya existe
+     */
     public User registerUserWithRole(UserRegistrationDTO registrationDTO, User.Role role) {
         // Validar que las contraseñas coincidan
         if (!registrationDTO.getPassword().equals(registrationDTO.getConfirmPassword())) {

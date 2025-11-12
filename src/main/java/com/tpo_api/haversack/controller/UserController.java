@@ -1,18 +1,15 @@
 package com.tpo_api.haversack.controller;
 
+import com.tpo_api.haversack.dto.AuthResponseDTO;
 import com.tpo_api.haversack.dto.LoginDTO;
 import com.tpo_api.haversack.dto.UserRegistrationDTO;
-import com.tpo_api.haversack.exception.BadRequestException;
 import com.tpo_api.haversack.exception.NotFoundException;
-import com.tpo_api.haversack.exception.UnauthorizedException;
 import com.tpo_api.haversack.model.User;
 import com.tpo_api.haversack.service.AuthService;
 import com.tpo_api.haversack.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -49,29 +46,43 @@ public class UserController {
     
     @PostMapping("/register")
     public ResponseEntity<Map<String, Object>> registerUser(@RequestBody UserRegistrationDTO registrationDTO) {
-        return authService.register(registrationDTO);
+        User user = authService.register(registrationDTO);
+        
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("message", "User registered successfully");
+        response.put("user", user);
+        
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
     
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> loginUser(@RequestBody LoginDTO loginDTO) {
-        return authService.login(loginDTO);
+        AuthResponseDTO authResponse = authService.login(loginDTO);
+        
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", authResponse.isSuccess());
+        response.put("message", authResponse.getMessage());
+        response.put("token", authResponse.getToken());
+        response.put("user", authResponse.getUser());
+        
+        return ResponseEntity.ok(response);
     }
     
     @GetMapping("/validate-token")
     public ResponseEntity<Map<String, Object>> validateToken(@RequestHeader("Authorization") String authHeader) {
-        return authService.validateToken(authHeader);
+        User user = authService.validateToken(authHeader);
+        
+        Map<String, Object> response = new HashMap<>();
+        response.put("valid", true);
+        response.put("user", user);
+        
+        return ResponseEntity.ok(response);
     }
     
     @GetMapping("/me")
     public ResponseEntity<User> getCurrentUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new UnauthorizedException("Not authenticated");
-        }
-        
-        String email = authentication.getName();
-        User user = userService.getUserByEmail(email)
-                .orElseThrow(() -> new NotFoundException("User not found"));
+        User user = userService.getCurrentAuthenticatedUser();
         return ResponseEntity.ok(user);
     }
     
@@ -91,23 +102,15 @@ public class UserController {
     public ResponseEntity<Map<String, Object>> changeUserRole(
             @PathVariable Long id,
             @RequestBody Map<String, String> request) {
-        Map<String, Object> response = new HashMap<>();
         
         String roleString = request.get("role");
-        if (roleString == null) {
-            throw new BadRequestException("Role is required");
-        }
-
-        User.Role newRole;
-        if (!isValidRole(roleString)) {
-            throw new BadRequestException("Invalid role. Must be USER, ADMIN, or SUPERADMIN");
-        }
-        newRole = User.Role.valueOf(roleString.toUpperCase());
-
-        User updatedUser = userService.changeUserRole(id, newRole);
+        User updatedUser = userService.changeUserRole(id, roleString);
+        
+        Map<String, Object> response = new HashMap<>();
         response.put("success", true);
         response.put("message", "User role updated successfully");
         response.put("user", updatedUser);
+        
         return ResponseEntity.ok(response);
     }
 
@@ -120,15 +123,5 @@ public class UserController {
         response.put("user", admin);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
-
-    private boolean isValidRole(String roleString) {
-        try {
-            User.Role.valueOf(roleString.toUpperCase());
-            return true;
-        } catch (IllegalArgumentException e) {
-            return false;
-        }
-    }
 }
 
-//TODO: Revisar la separacion en capas. Controler maneja las solicitudes http. services maneja el modelo de negocio.
