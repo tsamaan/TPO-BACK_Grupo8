@@ -72,12 +72,17 @@ public class SecurityConfig {
                 // Rutas de carrito que requieren autenticación
                 .requestMatchers("/api/cart/**").authenticated()
 
-                // Rutas de pedidos/órdenes (requieren autenticación)
-                .requestMatchers("POST", "/api/orders/**").authenticated()
-                .requestMatchers("GET", "/api/orders/**").authenticated()
-                .requestMatchers("GET", "/api/orders/user/**").authenticated()
-                .requestMatchers("PUT", "/api/orders/**").hasAnyRole("ADMIN", "SUPERADMIN")
-                .requestMatchers("DELETE", "/api/orders/**").hasAnyRole("ADMIN", "SUPERADMIN")
+                // Rutas de pedidos/órdenes
+                .requestMatchers("POST", "/api/orders").permitAll()              // Crear orden (compra) - permitir invitados
+                .requestMatchers("POST", "/api/orders/guest").permitAll()        // Crear orden como invitado - permitir invitados
+                .requestMatchers("GET", "/api/orders").hasAnyRole("ADMIN", "SUPERADMIN")  // Listar todas las órdenes - solo admin
+                .requestMatchers("GET", "/api/orders/{id}").hasAnyRole("USER", "ADMIN", "SUPERADMIN")      // Ver orden específica - todos los usuarios autenticados
+                .requestMatchers("GET", "/api/orders/email/**").hasAnyRole("USER", "ADMIN", "SUPERADMIN")  // Ver órdenes por email - todos los usuarios autenticados
+                .requestMatchers("GET", "/api/orders/status/**").hasAnyRole("ADMIN", "SUPERADMIN")  // Filtrar por status - solo admin
+                .requestMatchers("GET", "/api/orders/date-range").hasAnyRole("ADMIN", "SUPERADMIN") // Filtrar por fecha - solo admin
+                .requestMatchers("GET", "/api/orders/sales-total").hasAnyRole("ADMIN", "SUPERADMIN") // Total ventas - solo admin
+                .requestMatchers("PUT", "/api/orders/**").hasAnyRole("ADMIN", "SUPERADMIN")  // Actualizar orden - solo admin
+                .requestMatchers("DELETE", "/api/orders/**").hasAnyRole("ADMIN", "SUPERADMIN") // Eliminar orden - solo admin
 
                 // Cualquier otra ruta requiere autenticación por defecto
                 .anyRequest().authenticated()

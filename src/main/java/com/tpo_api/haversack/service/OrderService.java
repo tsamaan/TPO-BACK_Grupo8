@@ -1,6 +1,8 @@
 package com.tpo_api.haversack.service;
 
 import com.tpo_api.haversack.dto.OrderDTO;
+import com.tpo_api.haversack.exception.BadRequestException;
+import com.tpo_api.haversack.exception.NotFoundException;
 import com.tpo_api.haversack.model.Direccion;
 import com.tpo_api.haversack.model.Order;
 import com.tpo_api.haversack.model.OrderItem;
@@ -85,13 +87,15 @@ public class OrderService {
                     // Reducir stock de la variante si existe
                     if (itemDTO.getVariantId() != null) {
                         ProductVariant variant = productVariantRepository.findById(itemDTO.getVariantId())
-                                .orElseThrow(() -> new RuntimeException("Variante no encontrada: " + itemDTO.getVariantId()));
+                                .orElseThrow(() -> new NotFoundException(
+                                    "Product variant not found with ID: " + itemDTO.getVariantId() + 
+                                    ". Please refresh the page and try again."));
                         
                         // Verificar que hay suficiente stock
                         if (variant.getStock() < itemDTO.getCantidad()) {
-                            throw new RuntimeException("Stock insuficiente para " + itemDTO.getName() + 
-                                    " (Color: " + variant.getColor() + "). Disponible: " + variant.getStock() + 
-                                    ", Solicitado: " + itemDTO.getCantidad());
+                            throw new BadRequestException("Insufficient stock for " + itemDTO.getName() + 
+                                    " (Color: " + variant.getColor() + "). Available: " + variant.getStock() + 
+                                    ", Requested: " + itemDTO.getCantidad());
                         }
                         
                         // Reducir el stock

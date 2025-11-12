@@ -22,6 +22,25 @@ services:
       timeout: 5s
       retries: 5
 
+  # phpMyAdmin - Interfaz web para administrar MySQL
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: haversack-phpmyadmin
+    restart: unless-stopped
+    depends_on:
+      - db
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      PMA_USER: haversack
+      PMA_PASSWORD: haversackpass
+      MYSQL_ROOT_PASSWORD: rootpassword
+      UPLOAD_LIMIT: 300M
+    ports:
+      - "8081:80"
+    networks:
+      - haversack-network
+
   # Aplicación Spring Boot
   app:
     build: 
