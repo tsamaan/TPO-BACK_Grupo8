@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@com.fasterxml.jackson.annotation.JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class ProductVariant {
     
     @Id

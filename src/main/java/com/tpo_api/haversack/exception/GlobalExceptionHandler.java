@@ -215,16 +215,48 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
+    // ========== Excepciones de Runtime ==========
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ApiError> handleRuntimeException(RuntimeException ex, HttpServletRequest request) {
+        log.error("Runtime exception: {} - Path: {}", ex.getMessage(), request.getRequestURI(), ex);
+
+        ApiError error = new ApiError(
+            HttpStatus.INTERNAL_SERVER_ERROR.value(),
+            "Internal Server Error",
+            ex.getMessage() != null ? ex.getMessage() : "A runtime error occurred",
+            request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+    }
+
     // ========== Excepción Genérica (última red de seguridad) ==========
-    
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handleGeneric(Exception ex, HttpServletRequest request) {
         log.error("Unexpected error: {} - Path: {}", ex.getMessage(), request.getRequestURI(), ex);
-        
+
+        // TEMPORAL: Mostrar detalles del error en desarrollo para debugging
+        String detailedMessage = "An unexpected error occurred. Please try again later.";
+        String exceptionType = ex.getClass().getSimpleName();
+
+        // Incluir causa raíz si existe
+        Throwable rootCause = ex;
+        while (rootCause.getCause() != null && rootCause.getCause() != rootCause) {
+            rootCause = rootCause.getCause();
+        }
+
+        // Mensaje más detallado para debugging
+        detailedMessage = String.format("[%s] %s | Root cause: %s",
+            exceptionType,
+            ex.getMessage() != null ? ex.getMessage() : "No message",
+            rootCause.getMessage() != null ? rootCause.getMessage() : "No root cause"
+        );
+
         ApiError error = new ApiError(
-            HttpStatus.INTERNAL_SERVER_ERROR.value(), 
-            "Internal Server Error", 
-            "An unexpected error occurred. Please try again later.", 
+            HttpStatus.INTERNAL_SERVER_ERROR.value(),
+            "Internal Server Error",
+            detailedMessage,
             request.getRequestURI()
         );
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);

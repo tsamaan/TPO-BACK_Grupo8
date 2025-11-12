@@ -15,7 +15,7 @@ import java.util.ArrayList;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"}, ignoreUnknown = true)
 public class Product {
     
     @Id
@@ -47,7 +47,8 @@ public class Product {
     private List<String> tags;
     
     // Relación con variantes (cada producto puede tener múltiples variantes)
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    // IMPORTANTE: NO usar cascade ni orphanRemoval - gestión manual de variantes
+    @OneToMany(mappedBy = "product", fetch = FetchType.EAGER)
     @JsonManagedReference
     private List<ProductVariant> variants = new ArrayList<>();
     
